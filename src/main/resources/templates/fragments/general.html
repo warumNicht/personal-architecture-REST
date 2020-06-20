@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head th:fragment="head">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arh. Andrey Minev</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/exo2.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/nav.css}">
+
+    <link rel="icon" type="image/png" th:href="@{/images/corynth.png}"/>
+
+    <th:block th:utext="${@localeService.loadScripts()}">
+    </th:block>
+
+    <script id="first-script" th:src="@{/js/lib/jquery-3.3.1.slim.min.js}"></script>
+    <script th:src="@{/js/lib/jquery-3.4.1.min.js}"></script>
+    <script th:src="@{/js/lib/popper.min.js}"></script>
+    <script th:src="@{/js/lib/bootstrap.min.js}"></script>
+</head>
+<body>
+<footer th:fragment="footer">
+
+    <div>
+        &copy; CopyRight ENSAPLV Architecture and Urbanism 2019. All rights
+        reserved.
+        <span></span>
+    </div>
+
+</footer>
+
+</body>
+</html>

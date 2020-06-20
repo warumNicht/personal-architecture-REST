@@ -1,0 +1,42 @@
+<!DOCTYPE html >
+<html xmlns:th="http://www.thymeleaf.org" lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      th:replace="fragments/base-layout::layout(~{this :: main}, null)">
+
+<main class="wrapper-25 center-main">
+    <form th:method="post" th:action="@{|/${@localeService.getLocale()}/admin/category/create|}"
+          th:object="${categoryCreateModel}">
+        <div class="title" th:text="#{category.create}"></div>
+
+        <div class="form-group" th:classappend="${#fields.hasErrors('country')} ? 'text-danger'">
+            <label for="lang" th:text="#{lang.country}"></label>
+
+            <select name="country" class="form-control" id="lang" th:field="${categoryCreateModel.country}">
+                <option th:each="countryCode : ${T(architecture.domain.CountryCodes).values()}"
+                        th:value="${countryCode}"
+                        th:text="#{${'lang.' + countryCode }}"
+                        th:selected="${#strings.equals(categoryCreateModel.getCountry(), countryCode) ? true : false}">
+                </option>
+            </select>
+
+            <small th:each="error : ${#fields.errors('country')}" th:utext="${error +'<br>'}"></small>
+        </div>
+
+        <div class="form-group" th:classappend="${#fields.hasErrors('name')} ? 'text-danger'">
+            <label for="name" th:text="#{name}"></label>
+            <input type="text" class="form-control"
+                   th:field="*{name}" th:value="${categoryCreateModel.name}"
+                   id="name" th:placeholder="#{name}+'...'" name="title"
+                   required pattern="^.{2,}$" title="Please enter at least 2 characters">
+
+            <small th:each="error : ${#fields.errors('name')}" th:utext="${error} + '<br>'">
+            </small>
+        </div>
+
+        <div class="mt-4 d-flex justify-content-center">
+            <button type="submit" class="btn btn-info" th:text="#{category.create}"></button>
+        </div>
+    </form>
+</main>
+
+</html>

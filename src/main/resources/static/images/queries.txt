@@ -1,0 +1,11 @@
+SELECT a.id,a.date, con.article_title, con.article_content FROM  articles as a
+Join (SELECT s1.article_id,s1.article_title, s1.article_content, s1.country_code
+FROM localised_content s1
+JOIN (
+  SELECT article_id, article_title, MAX(country_code) AS country
+  FROM localised_content
+  where country_code='BG' or country_code='ES'
+  GROUP BY article_id) AS s2
+  ON s1.article_id = s2.article_id AND s1.country_code = s2.country
+ORDER BY article_id) as con
+on a.id=con.article_id;

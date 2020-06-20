@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      th:replace="fragments/base-layout::layout(~{this :: main}, ~{this :: null})">
+
+<main class="wrapper-25">
+    <div class="title" th:text="#{category.edit}"></div>
+
+    <form th:method="put"
+          th:action="@{/{locale}/admin/category/edit/{categoryId}(categoryId=${categoryEditModel.id},locale=${@localeService.getLocale()})}"
+          th:object="${categoryEditModel}">
+
+        <div class="form-group" th:classappend="${#fields.hasErrors('localNames')} ? 'text-danger'">
+            <small th:each="error : ${#fields.errors('localNames')}" th:utext="${error +'<br>'}">
+            </small>
+        </div>
+
+        <div class="form-group" th:each="countryCode, stat :*{localNames}"
+             th:classappend="${#fields.hasErrors('localNames[__${countryCode.key}__]')} ? 'text-danger'">
+            <label th:text="#{${'lang.' + countryCode.key }}"></label>
+            <input type="text" class="form-control"
+                   th:field="*{localNames[__${countryCode.key}__]}">
+            <small th:each="error : ${#fields.errors('localNames[__${countryCode.key}__]')}"
+                   th:utext="${error +'<br>'}">
+            </small>
+        </div>
+
+        <div class="mt-4 d-flex justify-content-center">
+            <button type="submit" class="btn btn-info" th:text="#{category.edit}"></button>
+        </div>
+    </form>
+</main>
+
+</html>

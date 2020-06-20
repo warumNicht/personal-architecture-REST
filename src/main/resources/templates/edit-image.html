@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head th:replace="~{fragments/general :: head}"></head>
+
+<body>
+
+<header th:insert="~{fragments/navbar :: guest-ul}"></header>
+
+<main>
+
+    <form class="mx-auto w-25" th:action="@{|/${@localeService.getLocale()}/admin/images/edit/${imageEdit.id}|}"
+          th:method="put" th:object="${imageEdit}">
+        <input type="hidden" th:field="*{id}" th:value="${imageEdit.id}">
+        <div class="form-group">
+            <img th:src="${imageEdit.url}" alt="">
+        </div>
+
+        <div class="form-group" th:classappend="${#fields.hasErrors('url')} ? 'text-danger'">
+            <label>Url</label>
+            <input type="text" class="form-control"
+                   th:field="*{url}" th:value="${imageEdit.url}">
+            <small th:each="error : ${#fields.errors('url')}" th:utext="${error +'<br>'}">
+            </small>
+        </div>
+
+        <div class="form-group" th:classappend="${#fields.hasErrors('localImageNames')} ? 'text-danger'">
+            <small th:each="error : ${#fields.errors('localImageNames')}" th:utext="${error +'<br>'}">
+            </small>
+        </div>
+
+        <div class="form-group" th:each="countryCode, stat :*{localImageNames}"
+             th:classappend="${#fields.hasErrors('localImageNames[__${countryCode.key}__]')} ? 'text-danger'">
+            <label th:text="#{${'lang.' + countryCode.key }}"></label>
+            <input type="text" class="form-control"
+                   th:field="*{localImageNames[__${countryCode.key}__]}">
+            <small th:each="error : ${#fields.errors('localImageNames[__${countryCode.key}__]')}"
+                   th:utext="${error +'<br>'}">
+            </small>
+        </div>
+
+        <div class="button-holder mt-4 d-flex justify-content-center">
+            <button type="submit" class="btn btn-info">Edit Image</button>
+        </div>
+    </form>
+</main>
+
+<footer th:replace="~{fragments/general :: footer}"></footer>
+
+</body>
+</html>

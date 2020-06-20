@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      th:replace="fragments/base-layout::layout(~{this :: main},null)">
+<main class="wrapper-80">
+    <div class="title" th:text="#{article.add.lang}"></div>
+    <form th:method="post"
+          th:action="@{|/${@localeService.getLocale()}/admin/articles/addLang/${articleBinding.id}|}"
+          th:object="${articleBinding}">
+
+        <div class="form-group" th:classappend="${#fields.hasErrors('country')} ? 'text-danger'">
+            <label for="lang" th:text="#{lang.country}"></label>
+
+            <select name="country" class="form-control" id="lang" th:field="${articleBinding.country}">
+                <option th:each="countryCode : ${T(architecture.domain.CountryCodes).values()}"
+                        th:value="${countryCode}"
+                        th:text="#{${'lang.' + countryCode }}">
+                </option>
+            </select>
+
+            <small th:each="error : ${#fields.errors('country')}" th:utext="${error +'<br>'}">
+            </small>
+        </div>
+
+        <div class="form-group" th:classappend="${#fields.hasErrors('title')} ? 'text-danger'">
+            <label for="title" th:text="#{article.title}"></label>
+            <input type="text" class="form-control"
+                   th:field="*{title}" th:value="${articleBinding.title}"
+                   id="title" th:placeholder="#{article.title}+'...'" name="title"
+                   required pattern="^.{2,}$" title="Please enter at least 2 characters">
+
+            <small th:each="error : ${#fields.errors('title')}" th:utext="${error +'<br>'}">
+            </small>
+        </div>
+
+        <div class="form-group" th:classappend="${#fields.hasErrors('content')} ? 'text-danger'">
+            <label for="content" th:text="#{article.content}"></label>
+            <textarea type="text" class="form-control" rows="9"
+                      th:field="*{content}" th:value="${articleBinding.content}"
+                      id="content" th:placeholder="#{article.content}" name="content"
+                      required pattern="^.{2,}$" title="Please enter at least 2 characters">
+            </textarea>
+
+            <small th:each="error : ${#fields.errors('content')}" th:utext="${error +'<br>'}">
+            </small>
+        </div>
+
+        <div th:if="${articleBinding.mainImage!=null}" class="form-group"
+             th:classappend="${#fields.hasErrors('mainImage')} ? 'text-danger'">
+            <label for="mainImageName">Image name</label>
+            <input type="text" class="form-control"
+                   th:field="*{mainImage}" th:value="${articleBinding.mainImage}"
+                   id="mainImageName" th:placeholder="${'Enter name'}" name="mainImageName">
+
+            <small th:each="error : ${#fields.errors('mainImage')}" th:utext="${error +'<br>'}">
+            </small>
+        </div>
+
+        <div class="button-holder mt-4 d-flex justify-content-center">
+            <button type="submit" class="btn btn-secondary" th:text="#{article.add.lang}"></button>
+        </div>
+    </form>
+</main>
+
+</html>

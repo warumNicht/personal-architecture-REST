@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      th:replace="fragments/base-layout::layout(~{this :: main},~{this :: #script-block})">
+<main>
+    <div class="mx-auto w-25" th:object="${article}">
+        <div class="form-group">
+            <label for="title" th:text="#{article.title}"></label>
+            <input type="text" class="form-control" disabled
+                   th:value="${article.title}"
+                   id="title" th:placeholder="#{article.title}+'...'" name="title">
+        </div>
+
+        <div class="form-group">
+            <img th:src="@{${article.mainImageUrl != null ? article.mainImageUrl : '/images/default.jpg'}}" alt="">
+        </div>
+
+        <select id="lang" class="form-control">
+            <option th:each="countryCode : ${T(architecture.domain.CountryCodes).values()}"
+                    th:value="${countryCode}"
+                    th:text="#{${'lang.' + countryCode }}">
+            </option>
+        </select>
+
+        <div class="form-group" id="image.urlDiv">
+            <label for="url">Url</label>
+            <input type="text" name="url" class="form-control"
+                   id="url" th:placeholder="'URL...'">
+        </div>
+
+        <div class="form-group" id="image.nameDiv">
+            <label for="name">Name</label>
+            <input type="text" class="form-control"
+                   id="name" th:placeholder="'Name...'">
+        </div>
+        <input type="hidden" th:name="${_csrf.headerName}" th:value="${_csrf.token}"/>
+
+        <div class="button-holder mt-4 d-flex justify-content-center">
+            <button id="submit-button" class="btn btn-success" th:text="#{edit}"></button>
+        </div>
+    </div>
+</main>
+
+<th:block id="script-block">
+    <script th:inline="javascript">
+        const article = [[${article}]];
+        const token = [[${_csrf.token}]];
+        const tokenHeader = [[${_csrf.headerName}]]
+    </script>
+    <script type="module" th:src="@{/js/article-add-image.js}"></script>
+</th:block>
+
+</html>

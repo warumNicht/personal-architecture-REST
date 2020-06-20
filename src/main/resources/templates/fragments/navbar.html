@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="en"
+      xmlns="http://www.w3.org/1999/xhtml">
+
+
+<nav th:fragment="guest-ul" class="navbar navbar-expand-lg navbar-light bg-light nav-pad-v-0">
+    <a class="navbar-brand" href="#" th:text="#{greeting}"></a>
+    <button class="navbar-toggler" type="button" data-toggle="dropdown" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent" th:with="locale=${@localeService.getLocale()}">
+        <ul class="navbar-nav nav-between">
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/}" th:text="#{home}"><span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item" sec:authorize="isAnonymous()">
+                <a class="nav-link" th:href="@{|/${locale}/users/register|}" th:text="#{register}"></a>
+            </li>
+            
+            <li class="nav-item dropdown-arch" sec:authorize="hasAnyRole('ROLE_ADMIN')">
+                <div class="current-item">
+                    <div th:text="#{admin}"></div>
+                    <div class="dropdown-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="18 15 12 9 6 15"></polyline>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="dropdown-content-arch">
+                    <a class="dropdown-item" th:href="@{|/${locale}/admin/articles/create|}"
+                       th:text="#{article.create}"></a>
+                    <a class="dropdown-item" th:href="@{|/${locale}/admin/listAll|}" th:text="#{list.articles}"></a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" th:href="@{|/${locale}/admin/category/create|}"
+                       th:text="#{category.create}"></a>
+                    <a class="dropdown-item" th:href="@{|/${locale}/admin/category/list|}"
+                       th:text="#{list.categories}"></a>
+                </div>
+            </li>
+
+
+            <li class="nav-item" sec:authorize="isAnonymous()">
+                <a class="nav-link" th:href="@{|/${locale}/users/login|}" th:text="#{login}"></a>
+            </li>
+            <th:block sec:authorize="isAuthenticated()">
+                <li class="nav-item">
+                    <div class="nav-link">
+                        <span th:text="|#{hi}, |"></span>
+                        <span th:text="${#authentication.principal.username}"></span>
+                        <span sec:authorize="hasRole('ADMIN')"> (ADMIN)</span>
+                        <span sec:authorize="!hasRole('ADMIN')"> (USER)</span>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <form th:action="@{/logout}" th:method="post">
+                        <button class="btn btn-link nav-link nav-link-white active" th:text="#{logout}"></button>
+                    </form>
+                </li>
+                <li class="nav-item">
+                    <form th:action="@{|/${locale}/users/custom-logout|}" th:method="post">
+                        <button class="btn btn-link nav-link nav-link-white active">Custom logout</button>
+                    </form>
+                </li>
+            </th:block>
+
+            <li class="nav-item dropdown-arch">
+                <div class="current-item">
+                    <div class="selected-flag" th:utext="${T(architecture.domain.CountryCodes).valueOf(#strings.toUpperCase(locale)).getSvg()}"></div>
+                    <div th:text="#{${'lang.' + #strings.toUpperCase(locale) }}"></div>
+                    <div class="dropdown-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="18 15 12 9 6 15"></polyline>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="dropdown-content-arch">
+                    <a th:each="countryCode : ${T(architecture.domain.CountryCodes).values()}"
+                       th:classappend="${#strings.toLowerCase(countryCode).equals(locale)} ? 'selected-item' : ''"
+                       th:href="@{${#request.getRequestURL()} + '?lang='
+                            + ${#strings.toLowerCase(countryCode)}}">
+                        <div class="option-holder">
+                            <div class="flag-holder" th:utext="${countryCode.getSvg()}"></div>
+                            <div th:text="#{${'lang.' + countryCode }}"></div>
+                        </div>
+                    </a>
+                </div>
+            </li>
+            
+            <li class="nav-item dropdown-arch">
+                <div class="current-item">
+                    <div>Project category</div>
+                    <div class="dropdown-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="18 15 12 9 6 15"></polyline>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="dropdown-content-arch" id="categories-dropdown">
+                    <a th:href="@{|/${locale}/projects/category/555|}">
+                        <div class="option-holder" th:text="#{all}"></div>
+                    </a>
+                </div>
+            </li>
+        </ul>
+
+    </div>
+
+    <script type="module" th:src="@{/js/nav.js}"></script>
+    <script th:if="${@localeService.checkOldAndroid()}" nomodule th:src="@{/js/nav-android.js}"></script>
+
+</nav>
+
+</html>

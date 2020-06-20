@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns="http://www.w3.org/1999/xhtml"
+      th:replace="fragments/base-layout::layout(~{this :: main}, ~{this :: script})">
+<head th:replace="~{fragments/general :: head}"></head>
+
+<main class="container-fluid">
+    <div>
+        <h1 th:text="#{article.all}"></h1>
+    </div>
+
+    <div class="article-container">
+        <div th:if="${articles.isEmpty()}">No results</div>
+        <article class="article-centered" th:each="article: ${articles}">
+            <div>
+                <p th:text="|ArticleId: ${article.id} Created: ${article.date}|"></p>
+            </div>
+            <div>
+                <div class="article-square">
+                        <img th:src="@{${article.mainImage != null ? article.mainImage.url : '/images/default.jpg'}}" alt="">
+                </div>
+                <div th:if="${article.mainImage != null}" th:text="${article.mainImage.name}"></div>
+            </div>
+            <div>
+                <div>
+                    <p th:text="${article.localisedContent.title}"></p>
+                    <p th:text="${article.localisedContent.content}"></p>
+                </div>
+            </div>
+
+            <a class="btn btn-success" th:href="@{|/${@localeService.getLocale()}/admin/articles/edit/${article.id}|}"
+               sec:authorize="hasAnyRole('ROLE_ADMIN')"
+               th:text="#{edit}">
+            </a>
+        </article>
+    </div>
+</main>
+
+</html>

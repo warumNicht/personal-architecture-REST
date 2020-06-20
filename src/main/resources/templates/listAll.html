@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head th:replace="~{fragments/general :: head}"></head>
+
+<body>
+
+<header th:insert="~{fragments/navbar :: guest-ul}"></header>
+
+<main class="container-fluid">
+    <div>
+        <h1>All articles</h1>
+    </div>
+
+    <div class="article-container" th:with="locale=${@localeService.getLocale()}">
+        <div class="article-centered" th:each="article: ${allArticles}">
+            <div>
+                <p th:text="|ArticleId: ${article.id} Created: ${article.date}|"></p>
+            </div>
+            <div>
+                <img th:src="@{${article.mainImage != null ? article.mainImage.url : '/images/default.jpg'}}"
+                     alt="Not found">
+            </div>
+
+            <a class="btn btn-success" th:href="@{|/${locale}/admin/articles/edit/${article.id}|}"
+               th:text="#{edit}"></a>
+        </div>
+
+    </div>
+
+</main>
+
+<footer th:replace="~{fragments/general :: footer}"></footer>
+
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head th:replace="~{fragments/general :: head}"></head>
+
+<body>
+
+<header th:insert="~{fragments/navbar :: guest-ul}"></header>
+
+<main class="container-fluid">
+    <a href="#btm" th:text="#{go.foot}"></a>
+
+    <div id="top" class="article-container" th:with="locale=${@localeService.getLocale()}">
+        <div class="article-centered" th:object="${articleEdit}">
+
+            <select name="category" class="form-control" id="cat" th:field="${articleEdit.category.id}">
+                <option th:value="${articleEdit.category.id}"
+                        selected>
+                </option>
+            </select>
+            <div class="button-holder mt-4 d-flex justify-content-center">
+                <button id="categoryChange" class="btn btn-info" disabled
+                        th:text="#{article.changeCategory}"></button>
+            </div>
+
+            <div id="message"></div>
+
+            <div>
+                <p th:text="|ArticleId: ${articleEdit.id}|"></p>
+            </div>
+            <div>
+                <img th:src="@{${articleEdit.mainImage != null ? articleEdit.mainImage.url : '/images/default.jpg'}}"
+                     alt="Not found">
+            </div>
+            <div th:if="${articleEdit.mainImage==null}">
+                <a class="btn btn-info" th:href="@{|/${locale}/admin/articles/add-image/${articleEdit.id}?main=true|}"
+                   th:text="#{article.add.mainImage}"></a>
+            </div>
+            <div th:if="${articleEdit.mainImage!=null}">
+                <a class="btn btn-info" th:href="@{|/${locale}/admin/images/edit/${articleEdit.mainImage.id}|}"
+                   th:text="#{article.edit.mainImage}"></a>
+            </div>
+            <div>
+                <div th:each="local : ${articleEdit.localContent}">
+                    <p th:text="${local.key}"></p>
+                    <p th:text="${local.value.title}"></p>
+                    <p th:text="${local.value.content}"></p>
+                    <a class="btn btn-success"
+                       th:href="@{|/${locale}/admin/articles/edit/${articleEdit.id}/${local.key}|}">Alternative
+                        edit</a>
+                    <a class="btn btn-success"
+                       th:href="@{'/'+ ${locale} + '/admin/articles/edit/{id}/{lang}'(lang=${local.key},id=${articleEdit.id})}"
+                       th:text="|#{edit} ${local.key}|"></a>
+                </div>
+            </div>
+            <a class="btn btn-info" th:href="@{|/${locale}/admin/articles/addLang/${articleEdit.id}|}"
+               th:text="#{add.lang}"></a>
+            <a class="btn btn-info" th:href="@{|/${locale}/admin/articles/add-image/${articleEdit.id}|}"
+               th:text="#{add.image}"></a>
+            <a class="btn btn-info" id="show-hide-images" onclick="showImages()" th:text="#{article.viewImages}"></a>
+        </div>
+        <div id="image-container"></div>
+        <a id="btm" href="#top" th:text="#{go.head}"></a>
+    </div>
+
+</main>
+
+<footer th:replace="~{fragments/general :: footer}"></footer>
+
+<script th:inline="javascript">
+    const csrf = [[${_csrf}]];
+</script>
+<script type="module" th:src="@{/js/article-edit.js}"></script>
+
+</body>
+</html>

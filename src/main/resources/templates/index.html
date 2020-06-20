@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      th:replace="fragments/base-layout::layout(~{this :: main}, ~{this :: script})">
+
+<main>
+    <div>
+        <h1 th:text="#{mySite}"></h1>
+        <p th:text="#{archSentence}"></p>
+    </div>
+
+    <div style="display: flex; justify-content: space-around;">
+        <div style="width: 100px">
+            <svg viewBox="0 0 45 30">
+                <path d="M0 0 h45 v10 l-45 0  Z" style="fill:#000000"/>
+                <path d="M0 10 h45 v10 l-45 0  Z" style="fill:#FF0000"/>
+                <path d="M0 20 h45 v10 l-45 0  Z" style="fill:#FFCC00"/>
+            </svg>
+        </div>
+
+        <div style="width: 100px; margin: 15px;">
+            <svg viewBox="0 0 45 30">
+                <path d="M0 0 h15 v30 l-15 0  Z" style="fill:#0055A4"/>
+                <path d="M15 0 h15 v30 l-15 0  Z" style="fill:#fff"/>
+                <path d="M30 0 h15 v30 l-15 0  Z" style="fill:#EF4135"/>
+                <polyline points="15,0 30,0" style="fill:none;stroke:#707070;stroke-width:1" />
+                <polyline points="15,30 30,30" style="fill:none;stroke:#707070;stroke-width:1" />
+            </svg>
+        </div>
+
+        <div style="width: 100px">
+            <svg viewBox="0 0 60 30">
+                <clipPath id="a">
+                    <path d="M30 15h30v15zv15H0zH0V0zV0h30z"/>
+                </clipPath>
+                <path fill="#00247d" d="M0 0v30h60V0z"/>
+                <path stroke="#fff" stroke-width="6" d="M0 0l60 30m0-30L0 30"/>
+                <path stroke="#cf142b" stroke-width="4" d="M0 0l60 30m0-30L0 30" clip-path="url(#a)"/>
+                <path stroke="#fff" stroke-width="10" d="M30 0v30M0 15h60"/>
+                <path stroke="#cf142b" stroke-width="6" d="M30 0v30M0 15h60"/>
+            </svg>
+
+        </div>
+
+        <div style="width: 100px;  margin: 15px;">
+            <svg viewBox="0 0 750 500">
+                <style>.st0{fill:#c60b1e}.st1{fill:#ffc400}.st2{fill:#ad1519}.st3{fill:#f5f5f5}.st4{fill:#c8b100}.st5{fill:#005bbf}.st6{fill:#ffb441}.st7{fill:#ed72aa}.st8{fill:#ffd250}</style>
+                <path d="M0 0h750v500H0z" class="st0"/>
+                <path d="M0 125h750v250H0z" class="st1"/>
+                <path d="M321 260.2l7.9-38.9c.7-3.6-1.8-7-5.1-7h-5.6c-3.4 0-5.9 3.4-5.1 7l7.9 38.9z" class="st2"/>
+                <path d="M311.7 239.8h18.7v86.6h-18.7z" class="st3"/>
+                <path d="M307 229.6h28v10.2h-28z" class="st4"/>
+                <path d="M288.3 260.2H335v10.2h-46.7zm46.8 40.7L307 290.7v-10.2l28.1 10.2zm-154.3-40.7l7.9-38.9c.7-3.6-1.8-7-5.1-7H178c-3.4 0-5.9 3.4-5.1 7l7.9 38.9z" class="st2"/>
+                <path d="M213.5 229.6c-5.2 0-9.3 4.6-9.3 10.2V306c0 12.4 10.6 35.7 46.7 35.7s46.7-23.3 46.7-35.7v-66.3c0-5.6-4.2-10.2-9.3-10.2h-74.8z" class="st3"/>
+                <path d="M250.9 280.5h-46.7v-40.8c0-5.6 4.2-10.2 9.3-10.2h37.4v51zm0 0h46.7V306c0 14.1-10.5 25.5-23.4 25.5-12.9 0-23.4-11.4-23.4-25.5v-25.5z" class="st2"/>
+                <path d="M204.2 280.5h46.7V306c0 14.1-10.5 25.5-23.4 25.5-12.9 0-23.4-11.4-23.4-25.5v-25.5z" class="st4"/>
+                <path d="M241.6 326.3v-45.8h-9.3V331c3.4-.8 6.5-2.5 9.3-4.7zm-18.7 4.7v-50.5h-9.3v45.8c2.7 2.2 5.8 3.9 9.3 4.7z" class="st2"/>
+                <path d="M213.5 260.2h28v10.2h-28zm0-20.4h28V250h-28z" class="st4"/>
+                <path d="M218.2 245.8h18.7v18.5h-18.7z" class="st4"/>
+                <path d="M171.5 239.8h18.7v86.6h-18.7z" class="st3"/>
+                <path d="M166.8 321.3h28v10.2h-28zm0-91.7h28v10.2h-28z" class="st4"/>
+                <path d="M162.1 331.5h37.4v10.2h-37.4z" class="st5"/>
+                <path d="M307 321.3h28v10.2h-28z" class="st4"/>
+                <path d="M302.3 331.5h37.4v10.2h-37.4z" class="st5"/>
+                <path d="M222.9 218.6H279v11h-56.1z" class="st4"/>
+                <path d="M245.2 182.5h11.4v34.3h-11.4z" class="st6"/>
+                <path d="M279 300.9v5.1c0 2.8-2.1 5.1-4.7 5.1s-4.7-2.3-4.7-5.1v-5.1h9.4m9.3-10.2h-28V306c0 8.4 6.3 15.3 14 15.3s14-6.9 14-15.3v-15.3z" class="st4"/>
+                <path d="M274.3 270.3c-5.2 0-9.3-4.6-9.3-10.2V250c0-5.6 4.2-10.2 9.3-10.2 5.2 0 9.3 4.6 9.3 10.2v10.2c0 5.6-4.1 10.1-9.3 10.1z" class="st7"/>
+                <ellipse cx="250.9" cy="280.5" class="st5" rx="14" ry="15.3"/>
+                <path d="M239.5 201.8c-9.5 0-17.1-7.7-17.1-17.1 0-9.5 7.7-17.1 17.1-17.1 9.5 0 17.1 7.7 17.1 17.1 0 9.4-7.6 17.1-17.1 17.1zm0-24.6c-4.1 0-7.4 3.3-7.4 7.4 0 4.1 3.3 7.4 7.4 7.4s7.4-3.3 7.4-7.4c0-4-3.3-7.4-7.4-7.4z" class="st4"/>
+                <path d="M262.4 201.8c-9.5 0-17.1-7.7-17.1-17.1 0-9.5 7.7-17.1 17.1-17.1 9.5 0 17.1 7.7 17.1 17.1 0 9.4-7.7 17.1-17.1 17.1zm0-24.6c-4.1 0-7.4 3.3-7.4 7.4 0 4.1 3.3 7.4 7.4 7.4 4.1 0 7.4-3.3 7.4-7.4 0-4-3.3-7.4-7.4-7.4z" class="st4"/>
+                <path d="M285.2 213.2c-9.5 0-17.1-7.7-17.1-17.1 0-9.5 7.7-17.1 17.1-17.1 9.5 0 17.1 7.7 17.1 17.1 0 9.5-7.6 17.1-17.1 17.1zm0-24.5c-4.1 0-7.4 3.3-7.4 7.4 0 4.1 3.3 7.4 7.4 7.4 4.1 0 7.4-3.3 7.4-7.4 0-4.1-3.3-7.4-7.4-7.4zm-68.6 24.5c-9.5 0-17.1-7.7-17.1-17.1 0-9.5 7.7-17.1 17.1-17.1 9.5 0 17.1 7.7 17.1 17.1.1 9.5-7.6 17.1-17.1 17.1zm0-24.5c-4.1 0-7.4 3.3-7.4 7.4 0 4.1 3.3 7.4 7.4 7.4s7.4-3.3 7.4-7.4c.1-4.1-3.3-7.4-7.4-7.4zm28.6-26.9h11.4v34.3h-11.4z" class="st4"/>
+                <path d="M216.6 219l-11.4-11.4 6.7-6.7c10.3-10.3 24.4-16.2 39-16.2 14.6 0 28.7 5.8 39 16.2l6.7 6.7-11.4 11.4h-68.6z" class="st2"/>
+                <circle cx="250.9" cy="207.5" r="5.7" class="st8"/>
+                <circle cx="228.1" cy="207.5" r="5.7" class="st8"/>
+                <circle cx="273.8" cy="207.5" r="5.7" class="st8"/>
+                <path d="M166.8 260.2h46.7v10.2h-46.7zm0 40.7l28-10.2v-10.2l-28 10.2z" class="st2"/>
+            </svg>
+        </div>
+    </div>
+
+
+    <img th:src="@{/images/corynth.png}">
+    <img th:src="@{/images/Desert.jpg}">
+
+    <div class="article-container">
+        <article class="article-centered" th:each="article: ${localizedArticles}">
+            <div>
+                <p th:text="|ArticleId: ${article.id} Created: ${article.date}|"></p>
+            </div>
+            <div>
+                <div>
+                    <p th:text="${article.localisedContent.title}"></p>
+                    <p th:text="${article.localisedContent.content}"></p>
+                </div>
+            </div>
+        </article>
+    </div>
+</main>
+
+</html>

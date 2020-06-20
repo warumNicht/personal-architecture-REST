@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      th:replace="fragments/base-layout::layout(~{this :: main},~{this :: #script-block})">
+
+<main class="wrapper-80 category-list-main">
+    <div class="title" th:text="#{category.all}"></div>
+
+    <div th:replace="~{fragments/loading-spinner :: spinner}"></div>
+    <div class="categories-container"></div>
+    <input id="edit-button-name" type="hidden" th:value="#{category.edit}">
+</main>
+
+<th:block id="script-block">
+    <script th:inline="javascript">
+        const locale = [[${@localeService.getLocale()}]];
+    </script>
+    <script th:src="@{/js/all-categories.js}"></script>
+</th:block>
+
+</html>

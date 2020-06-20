@@ -1,0 +1,196 @@
+/* variables*/
+:root {
+  --hover-bg-color: #F7F1F0;
+  --selected-border-left-color: #ff7400;
+  --border-left-width: 5px;
+  --hover-border-left-color: #b3cde0;
+  --selected-hover-border-left-color: #ff0000;
+}
+
+.nav-pad-v-0 {
+    padding: 0 10px;
+    min-height: 60px;
+    align-items: stretch;
+}
+
+.nav-between {
+    justify-content: space-between;
+    width: 100%;
+}
+
+/* mobile dropdown*/
+.dropdown-content-arch {
+    display: none;
+    background-color: #f9f9f9;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+}
+
+.dropdown-content-arch a {
+    display: flex;
+    align-items:center;
+    height: 40px;
+    border-bottom: solid 1px gainsboro;
+}
+
+.dropdown-content-arch svg{
+    width: 30px;
+}
+
+.selected-item{
+    border-left: var(--border-left-width) solid var(--selected-border-left-color);
+}
+
+.dropdown-content-arch a:hover {
+     background-color: var(--hover-bg-color);
+     border-left: var(--border-left-width) solid var(--hover-border-left-color);
+}
+
+.dropdown-content-arch a:hover .option-holder, .selected-item .option-holder{
+    margin-left:0;
+}
+
+a.selected-item:hover {
+     border-left: var(--border-left-width) solid var(--selected-hover-border-left-color);
+}
+
+@keyframes slide-in {
+    from {
+        max-height: 0
+    }
+    to {
+        max-height: 500px
+    }
+}
+
+@keyframes slide-out {
+    from {
+        max-height: 500px
+    }
+    to {
+        max-height: 0
+    }
+}
+
+.dropdown-out .dropdown-content-arch {
+    display: block;
+    overflow: hidden;
+    animation-name: slide-out;
+    animation-delay: -1.5s;
+    animation-timing-function: linear;
+    animation-duration: 2s;
+    animation-fill-mode: forwards;
+}
+
+.expanded-dropdown-arch .dropdown-content-arch {
+    display: block;
+    overflow: hidden;
+    animation-name: slide-in;
+    animation-timing-function: linear;
+    animation-duration: 2s;
+    /*animation-fill-mode: forwards;*/
+}
+
+.dropdown-icon {
+    display: block;
+    -ms-transform: rotate(180deg); /* IE 9 */
+    -webkit-transform: rotate(180deg); /* Safari and Chrome */
+    -o-transform: rotate(180deg); /* Opera */
+    -moz-transform: rotate(180deg); /* Firefox */
+    transform: rotate(180deg);
+
+    -webkit-transition-duration: 1s;
+    -moz-transition-duration: 1s;
+    -o-transition-duration: 1s;
+    transition-duration: 1s;
+    -webkit-transition-property: -webkit-transform;
+    -moz-transition-property: -moz-transform;
+    -o-transition-property: -o-transform;
+    transition-property: transform;
+}
+
+.expanded-dropdown-arch div.dropdown-icon {
+    -ms-transform: rotate(360deg); /* IE 9 */
+    -webkit-transform: rotate(360deg); /* Safari and Chrome */
+    -o-transform: rotate(360deg); /* Opera */
+    -moz-transform: rotate(360deg); /* Firefox */
+    transform: rotate(360deg);
+
+    -webkit-transition-duration: 1s;
+    -moz-transition-duration: 1s;
+    -o-transition-duration: 1s;
+    transition-duration: 1s;
+    -webkit-transition-property: -webkit-transform;
+    -moz-transition-property: -moz-transform;
+    -o-transition-property: -o-transform;
+    transition-property: transform;
+}
+
+.current-item {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+}
+
+.selected-item {
+    background-color: #ffe8a1;
+}
+
+.current-item svg {
+    width: 30px;
+    height: 30px;
+}
+
+.flag-holder{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 15px;
+}
+
+.option-holder{
+    display: flex;
+    margin-left: var(--border-left-width);
+}
+
+.selected-flag{
+    margin-right: 15px;
+}
+
+@media (min-width: 550px) {
+
+    /*dropdown*/
+    .dropdown-content-arch {
+        position: absolute;
+        min-width: 160px;
+        z-index: 1;
+    }
+
+    .expanded-dropdown-arch .dropdown-content-arch {
+        display: none;
+    }
+
+    .dropdown-arch:hover .dropdown-content-arch {
+        display: block;
+        overflow: hidden;
+        animation-name: slide-in;
+        animation-timing-function: linear;
+        animation-duration: 2s;
+        animation-fill-mode: forwards;
+    }
+
+    .dropdown-icon {
+        display: none;
+    }
+
+}

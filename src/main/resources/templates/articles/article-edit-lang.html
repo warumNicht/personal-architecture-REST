@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      th:replace="fragments/base-layout::layout(~{this :: main}, ~{this :: script})">
+
+<main>
+    <div class="mx-auto w-25" th:object="${articleEditLang}">
+        <input name="id" type="hidden" th:field="*{id}"/>
+        <div class="form-group" id="titleDiv">
+            <label for="title" th:text="#{article.title}"></label>
+            <input type="text" class="form-control"
+                   th:field="*{title}" th:value="${articleEditLang.title}"
+                   id="title" th:placeholder="#{article.title}+'...'" name="title"
+                   required pattern="^.{2,}$" title="Please enter at least 2 characters">
+        </div>
+
+        <div class="form-group" id="contentDiv">
+            <label for="content" th:text="#{article.content}"></label>
+            <input type="text" class="form-control"
+                   th:field="*{content}" th:value="${articleEditLang.content}"
+                   id="content" th:placeholder="#{article.content}" name="content"
+                   required pattern="^.{2,}$" title="Please enter at least 2 characters">
+        </div>
+
+        <div th:if="${articleEditLang.mainImage != null}" class="form-group" id="mainImageDiv">
+            <label for="mainImage">Main image name</label>
+            <input type="text" class="form-control"
+                   th:field="*{mainImage}" th:value="${articleEditLang.mainImage}"
+                   id="mainImage" th:placeholder="#{article.content}" name="mainImage"
+                   required pattern="^.{2,}$" title="Please enter at least 2 characters">
+        </div>
+
+        <div class="button-holder mt-4 d-flex justify-content-center">
+            <input type="hidden" name="country" th:value="${#strings.arraySplit(#request.getRequestURI(),'/')[5]}"/>
+            <button id="submit-button" class="btn btn-success" th:text="#{edit}"></button>
+        </div>
+    </div>
+</main>
+
+<script type="module" th:src="@{/js/article-edit-lang.js}"></script>
+
+</html>

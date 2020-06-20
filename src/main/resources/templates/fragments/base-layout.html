@@ -1,0 +1,19 @@
+<!DOCTYPE html >
+<html xmlns:th="http://www.thymeleaf.org" lang="en"
+      xmlns="http://www.w3.org/1999/xhtml" th:fragment="layout(main, scripts)">
+<head th:replace="~{fragments/general :: head}"></head>
+
+<body>
+
+<header th:insert="~{fragments/navbar :: guest-ul}"></header>
+
+<main th:replace="${main}"></main>
+
+<footer th:replace="~{fragments/general :: footer}"></footer>
+
+<th:block th:if="${scripts!=null}">
+    <th:block th:replace="${scripts}"/>
+</th:block>
+
+</body>
+</html>
