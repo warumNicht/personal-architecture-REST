@@ -15,11 +15,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Date;
 
 public class JwtCsrfValidatorFilter extends OncePerRequestFilter {
     // must be ascending
     private String[] ignoreCsrfAntMatchers = {  "/logout", "/users/authentication" ,
-            "/users/custom-logout", "/users/rest-authentication" };
+//            "/users/custom-logout",
+            "/users/rest-authentication" };
 
     private SecretService secretService;
 
@@ -31,6 +33,10 @@ public class JwtCsrfValidatorFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // NOTE: A real implementation should have a nonce cache so the token cannot be reused
 
+        if("OPTIONS".equals(request.getMethod())){
+            filterChain.doFilter(request, response);
+            return;
+        }
         CsrfToken token = (CsrfToken) request.getAttribute("_csrf");
         System.out.println(request.getServletPath());
         if (
@@ -45,7 +51,9 @@ public class JwtCsrfValidatorFilter extends OncePerRequestFilter {
                 Jws<Claims> claimsJws = Jwts.parser()
                         .setSigningKeyResolver(secretService.getSigningKeyResolver())
                         .parseClaimsJws(token.getToken());
-                System.out.println();
+                Date expiration = claimsJws.getBody().getExpiration();
+                System.out.println(new Date());
+                System.out.println(expiration.toString());
             } catch (JwtException e) {
                 // most likely an ExpiredJwtException, but this will handle any
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
