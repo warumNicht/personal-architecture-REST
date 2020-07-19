@@ -64,7 +64,6 @@ public class JwtCsrfValidatorFilter extends OncePerRequestFilter {
                 return;
             }
         }
-
         filterChain.doFilter(request, response);
     }
 }
