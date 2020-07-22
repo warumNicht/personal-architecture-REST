@@ -55,19 +55,7 @@ public class AdminController extends BaseController {
     }
 
     @PostMapping("/category/create")
-    public String createCategoryPost(@Valid @ModelAttribute(name = ViewNames.CATEGORY_CREATE_binding_model_name) CategoryCreateBindingModel bindingModel,
-                                     BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return ViewNames.CATEGORY_CREATE;
-        }
-        CategoryServiceModel category = new CategoryServiceModel();
-        category.getLocalCategoryNames().put(bindingModel.getCountry(), bindingModel.getName());
-        this.categoryService.addCategory(category);
-        return "redirect:/" + super.getLocale() + "/admin/category/list";
-    }
-
-    @PostMapping("/category/create2")
-    public ResponseEntity createCategoryPost2(@Valid @RequestBody CategoryCreateBindingModel bindingModel,
+    public ResponseEntity createCategoryPost(@Valid @RequestBody CategoryCreateBindingModel bindingModel,
                                               BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity
