@@ -130,7 +130,7 @@ public class ArticleController extends BaseController {
     @ResponseStatus(code = HttpStatus.ACCEPTED)
     public Object editArticleLangPut(@Valid @RequestBody ArticleLangBindingModel model, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return this.getBindingErrorsMap(bindingResult.getAllErrors());
+            return super.getBindingErrorsMap(bindingResult.getAllErrors());
         }
         ArticleServiceModel articleServiceModel = this.articleService.findById(model.getId());
         LocalisedArticleContentServiceModel content = this.modelMapper.map(model, LocalisedArticleContentServiceModel.class);
@@ -197,7 +197,7 @@ public class ArticleController extends BaseController {
                                              @PathVariable(name = "id") Long id,
                                              @RequestParam(value = "main", required = false) boolean isMain) {
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(405).body(this.getBindingErrorsMap(bindingResult.getAllErrors()));
+            return ResponseEntity.status(405).body(super.getBindingErrorsMap(bindingResult.getAllErrors()));
         }
         ArticleServiceModel article = this.articleService.findById(id);
         ImageServiceModel imageServiceModel = new ImageServiceModel(image.getImage().getUrl());
@@ -210,16 +210,6 @@ public class ArticleController extends BaseController {
             this.imageService.saveImage(imageServiceModel);
         }
         return ResponseEntity.status(202).body("\"/" + super.getLocale() + "/admin/articles/edit/" + id + "\"");
-    }
-
-    private HashMap<String, List<String>> getBindingErrorsMap(List<ObjectError> allErrors) {
-        HashMap<String, List<String>> errors = new HashMap<>();
-        for (ObjectError currentError : allErrors) {
-            FieldError fieldError = (FieldError) currentError;
-            errors.putIfAbsent(fieldError.getField(), new ArrayList<>());
-            errors.get(fieldError.getField()).add(fieldError.getDefaultMessage());
-        }
-        return errors;
     }
 
 }

@@ -32,7 +32,7 @@ public class CategoryCreateBindingModel {
 
     public void setCountry(String country) {
         try {
-            this.country = CountryCodes.valueOf(country);
+            this.country = CountryCodes.valueOf(country.toUpperCase());
         } catch (Exception e) {
             this.country = null;
         }

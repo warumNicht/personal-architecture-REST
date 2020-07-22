@@ -16,9 +16,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -69,11 +72,11 @@ public class AdminController extends BaseController {
         if (bindingResult.hasErrors()) {
             return ResponseEntity
                     .status(HttpStatus.NOT_ACCEPTABLE)
-                    .body(bindingResult.getAllErrors());
+                    .body(super.getBindingErrorsMap(bindingResult.getAllErrors()));
         }
         CategoryServiceModel category = new CategoryServiceModel();
         category.getLocalCategoryNames().put(bindingModel.getCountry(), bindingModel.getName());
-        this.categoryService.addCategory(category);
+//        this.categoryService.addCategory(category);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(String.format("Successfully created category %s !", bindingModel.getName()));
