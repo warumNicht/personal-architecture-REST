@@ -10,13 +10,18 @@ import architecture.services.interfaces.ArticleService;
 import architecture.services.interfaces.CategoryService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -50,15 +55,19 @@ public class AdminController extends BaseController {
     }
 
     @PostMapping("/category/create")
-    public String createCategoryPost(@Valid @ModelAttribute(name = ViewNames.CATEGORY_CREATE_binding_model_name) CategoryCreateBindingModel bindingModel,
-                                     BindingResult bindingResult) {
+    public ResponseEntity createCategoryPost(@Valid @RequestBody CategoryCreateBindingModel bindingModel,
+                                              BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return ViewNames.CATEGORY_CREATE;
+            return ResponseEntity
+                    .status(HttpStatus.NOT_ACCEPTABLE)
+                    .body(super.getBindingErrorsMap(bindingResult.getAllErrors()));
         }
         CategoryServiceModel category = new CategoryServiceModel();
         category.getLocalCategoryNames().put(bindingModel.getCountry(), bindingModel.getName());
-        this.categoryService.addCategory(category);
-        return "redirect:/" + super.getLocale() + "/admin/category/list";
+//        this.categoryService.addCategory(category);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(String.format("Successfully created category %s !", bindingModel.getName()));
     }
 
     @ResponseBody
