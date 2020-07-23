@@ -84,7 +84,7 @@ public class AdminController extends BaseController {
     }
 
     @GetMapping("/category/edit/{categoryId}")
-    public String editCategory(Model model, @PathVariable(name = "categoryId") Long categoryId) {
+    public ResponseEntity editCategory( @PathVariable(name = "categoryId") Long categoryId) {
         CategoryServiceModel category = this.categoryService.findById(categoryId);
         CategoryEditBindingModel bindingModel = new CategoryEditBindingModel();
         bindingModel.setId(categoryId);
@@ -92,16 +92,19 @@ public class AdminController extends BaseController {
         for (Map.Entry<CountryCodes, String> local : category.getLocalCategoryNames().entrySet()) {
             bindingModel.getLocalNames().put(local.getKey(), local.getValue());
         }
-        model.addAttribute(ViewNames.CATEGORY_EDIT_binding_model_name, bindingModel);
-        return ViewNames.CATEGORY_EDIT;
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bindingModel);
     }
 
-    @PutMapping("/category/edit/{categoryId}")
-    public String editCategoryPut(@Valid @ModelAttribute(name = ViewNames.CATEGORY_EDIT_binding_model_name) CategoryEditBindingModel model, BindingResult bindingResult,
+    @PutMapping(value = "/category/edit/{categoryId}")
+    public ResponseEntity editCategoryPut(@Valid @RequestBody CategoryEditBindingModel model, BindingResult bindingResult,
                                   @PathVariable(name = "categoryId") Long categoryId) {
         this.categoryService.findById(categoryId);
         if (bindingResult.hasErrors()) {
-            return ViewNames.CATEGORY_EDIT;
+            return ResponseEntity
+                    .status(HttpStatus.NOT_ACCEPTABLE)
+                    .body(super.getBindingErrorsMap(bindingResult.getAllErrors()));
         }
         CategoryServiceModel categoryToUpdate = this.modelMapper.map(model, CategoryServiceModel.class);
         Map<CountryCodes, String> filteredValues = categoryToUpdate.getLocalCategoryNames().entrySet()
@@ -112,7 +115,9 @@ public class AdminController extends BaseController {
         categoryToUpdate.setId(categoryId);
 
         this.categoryService.updateCategory(categoryToUpdate);
-        return "redirect:/" + super.getLocale() + "/admin/category/list";
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Successfully edited!");
     }
 
     @GetMapping(value = "/category/list")
