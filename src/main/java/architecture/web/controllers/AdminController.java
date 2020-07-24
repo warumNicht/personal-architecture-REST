@@ -41,19 +41,6 @@ public class AdminController extends BaseController {
         this.modelMapper = modelMapper;
     }
 
-    @RequestMapping(method = {RequestMethod.GET}, value = "/listAll")
-    public String listAll(Model model) {
-        List<ArticleServiceModel> allArticles = this.articleService.findAll();
-        model.addAttribute("allArticles", allArticles);
-        return ViewNames.ARTICLES_LIST_ALL;
-    }
-
-    @GetMapping("/category/create")
-    public String createCategory(Model modelView, @ModelAttribute(name = ViewNames.CATEGORY_CREATE_binding_model_name) CategoryCreateBindingModel model) {
-        modelView.addAttribute("categoryCreateModel", model);
-        return ViewNames.CATEGORY_CREATE;
-    }
-
     @PostMapping("/category/create")
     public ResponseEntity createCategoryPost(@Valid @RequestBody CategoryCreateBindingModel bindingModel,
                                               BindingResult bindingResult) {
@@ -64,7 +51,7 @@ public class AdminController extends BaseController {
         }
         CategoryServiceModel category = new CategoryServiceModel();
         category.getLocalCategoryNames().put(bindingModel.getCountry(), bindingModel.getName());
-//        this.categoryService.addCategory(category);
+        this.categoryService.addCategory(category);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(String.format("Successfully created category %s !", bindingModel.getName()));
@@ -107,8 +94,4 @@ public class AdminController extends BaseController {
                 .body("Successfully edited!");
     }
 
-    @GetMapping(value = "/category/list")
-    public String listCategories() {
-        return ViewNames.CATEGORIES_LIST;
-    }
 }
