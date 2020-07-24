@@ -10,13 +10,18 @@ import architecture.services.interfaces.ArticleService;
 import architecture.services.interfaces.CategoryService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -50,19 +55,23 @@ public class AdminController extends BaseController {
     }
 
     @PostMapping("/category/create")
-    public String createCategoryPost(@Valid @ModelAttribute(name = ViewNames.CATEGORY_CREATE_binding_model_name) CategoryCreateBindingModel bindingModel,
-                                     BindingResult bindingResult) {
+    public ResponseEntity createCategoryPost(@Valid @RequestBody CategoryCreateBindingModel bindingModel,
+                                              BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return ViewNames.CATEGORY_CREATE;
+            return ResponseEntity
+                    .status(HttpStatus.NOT_ACCEPTABLE)
+                    .body(super.getBindingErrorsMap(bindingResult.getAllErrors()));
         }
         CategoryServiceModel category = new CategoryServiceModel();
         category.getLocalCategoryNames().put(bindingModel.getCountry(), bindingModel.getName());
-        this.categoryService.addCategory(category);
-        return "redirect:/" + super.getLocale() + "/admin/category/list";
+//        this.categoryService.addCategory(category);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(String.format("Successfully created category %s !", bindingModel.getName()));
     }
 
     @GetMapping("/category/edit/{categoryId}")
-    public String editCategory(Model model, @PathVariable(name = "categoryId") Long categoryId) {
+    public ResponseEntity editCategory( @PathVariable(name = "categoryId") Long categoryId) {
         CategoryServiceModel category = this.categoryService.findById(categoryId);
         CategoryEditBindingModel bindingModel = new CategoryEditBindingModel();
         bindingModel.setId(categoryId);
@@ -70,16 +79,19 @@ public class AdminController extends BaseController {
         for (Map.Entry<CountryCodes, String> local : category.getLocalCategoryNames().entrySet()) {
             bindingModel.getLocalNames().put(local.getKey(), local.getValue());
         }
-        model.addAttribute(ViewNames.CATEGORY_EDIT_binding_model_name, bindingModel);
-        return ViewNames.CATEGORY_EDIT;
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bindingModel);
     }
 
-    @PutMapping("/category/edit/{categoryId}")
-    public String editCategoryPut(@Valid @ModelAttribute(name = ViewNames.CATEGORY_EDIT_binding_model_name) CategoryEditBindingModel model, BindingResult bindingResult,
+    @PutMapping(value = "/category/edit/{categoryId}")
+    public ResponseEntity editCategoryPut(@Valid @RequestBody CategoryEditBindingModel model, BindingResult bindingResult,
                                   @PathVariable(name = "categoryId") Long categoryId) {
         this.categoryService.findById(categoryId);
         if (bindingResult.hasErrors()) {
-            return ViewNames.CATEGORY_EDIT;
+            return ResponseEntity
+                    .status(HttpStatus.NOT_ACCEPTABLE)
+                    .body(super.getBindingErrorsMap(bindingResult.getAllErrors()));
         }
         CategoryServiceModel categoryToUpdate = this.modelMapper.map(model, CategoryServiceModel.class);
         Map<CountryCodes, String> filteredValues = categoryToUpdate.getLocalCategoryNames().entrySet()
@@ -90,7 +102,9 @@ public class AdminController extends BaseController {
         categoryToUpdate.setId(categoryId);
 
         this.categoryService.updateCategory(categoryToUpdate);
-        return "redirect:/" + super.getLocale() + "/admin/category/list";
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Successfully edited!");
     }
 
     @GetMapping(value = "/category/list")
