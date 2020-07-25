@@ -7,6 +7,9 @@ import javax.validation.constraints.NotNull;
 
 public class ArticleCreateBindingModel extends ArticleBindingModel {
     @NotNull
+    private Long categoryId;
+
+    @NotNull
     @ImageBindingValidationEmpty
     private ImageBindingModel mainImage;
 
@@ -20,5 +23,13 @@ public class ArticleCreateBindingModel extends ArticleBindingModel {
 
     public void setMainImage(ImageBindingModel mainImage) {
         this.mainImage = mainImage;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 }

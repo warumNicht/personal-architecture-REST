@@ -61,13 +61,15 @@ public class ArticleController extends BaseController {
     }
 
     @PostMapping("/create")
-    public String createArticlePost(@Valid @ModelAttribute(name = "articleBinding") ArticleCreateBindingModel bindingModel,
-                                    BindingResult bindingResult, @RequestParam(name = "categoryId") Long categoryId) {
+    public ResponseEntity createArticlePost(@Valid @RequestBody ArticleCreateBindingModel bindingModel,
+                                    BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return ViewNames.ARTICLE_CREATE;
+            return ResponseEntity
+                    .status(HttpStatus.NOT_ACCEPTABLE)
+                    .body(super.getBindingErrorsMap(bindingResult.getAllErrors()));
         }
         ArticleServiceModel article = new ArticleServiceModel(new Date());
-        CategoryServiceModel category = this.categoryService.findById(categoryId);
+        CategoryServiceModel category = this.categoryService.findById(bindingModel.getCategoryId());
         article.setCategory(category);
         LocalisedArticleContentServiceModel content = new LocalisedArticleContentServiceModel(bindingModel.getTitle(), bindingModel.getContent());
         article.getLocalContent().put(bindingModel.getCountry(), content);
@@ -78,7 +80,9 @@ public class ArticleController extends BaseController {
             article.setMainImage(mainImage);
         }
         this.articleService.createArticle(article);
-        return "redirect:/" + super.getLocale() + "/admin/listAll";
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(String.format("Successfully created article %s!", bindingModel.getTitle()));
     }
 
     @GetMapping("/addLang/{id}")
