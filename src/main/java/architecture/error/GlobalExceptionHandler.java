@@ -21,22 +21,21 @@ import java.util.HashMap;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = BaseControllerException.class)
-    public ModelAndView controllerErrorHandler(HttpServletRequest req, BaseControllerException e) throws Exception {
+    public ResponseEntity controllerErrorHandler(HttpServletRequest req, BaseControllerException e) throws Exception {
 //        if (AnnotationUtils.findAnnotation
 //                (e.getClass(), ResponseStatus.class) != null){
 //            System.out.println(e.getMessage());
 //            throw e;
 //        }
 
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("exception", e);
-        mav.addObject("url", req.getRequestURL());
-        mav.setViewName(ViewNames.CONTROLLER_ERROR);
-        return mav;
+        return ResponseEntity.status(404).body(new HashMap<>() {{
+            put("error", e.getMessage());
+            put("timestamp", new Date());
+        }});
     }
 
     @ExceptionHandler(value = RestException.class)
-    protected ResponseEntity<Object> handleConflict(
+    protected ResponseEntity handleConflict(
             RestException ex, HttpServletRequest request) {
         return ResponseEntity.status(404).body(new HashMap<>() {{
             put("status", 404);

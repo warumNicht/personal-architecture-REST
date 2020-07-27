@@ -3,13 +3,13 @@ package architecture.domain.models.viewModels.articles;
 import architecture.domain.models.viewModels.CategoryViewModel;
 
 public class ArticleEditViewModel extends ArticleViewModel {
-    private CategoryViewModel category;
+    private Long categoryId;
 
-    public CategoryViewModel getCategory() {
-        return category;
+    public Long getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategory(CategoryViewModel category) {
-        this.category = category;
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 }

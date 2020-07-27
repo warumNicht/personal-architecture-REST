@@ -147,11 +147,12 @@ public class ArticleController extends BaseController {
     }
 
     @GetMapping(value = "/edit/{id}")
-    public String editArticle(Model model, @PathVariable(name = "id") Long id) {
+    public ResponseEntity editArticle(@PathVariable(name = "id") Long id) {
         ArticleServiceModel article = this.articleService.findById(id);
         ArticleEditViewModel viewModel = this.modelMapper.map(article, ArticleEditViewModel.class);
-        model.addAttribute("articleEdit", viewModel);
-        return ViewNames.ARTICLE_EDIT;
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(viewModel);
     }
 
     @ResponseBody
