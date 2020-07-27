@@ -73,13 +73,13 @@ public class ArticleController extends BaseController {
         article.setCategory(category);
         LocalisedArticleContentServiceModel content = new LocalisedArticleContentServiceModel(bindingModel.getTitle(), bindingModel.getContent());
         article.getLocalContent().put(bindingModel.getCountry(), content);
-        if (!"".equals(bindingModel.getMainImage().getUrl())) {
+        if (bindingModel.getMainImage()!=null) {
             ImageServiceModel mainImage = this.modelMapper.map(bindingModel.getMainImage(), ImageServiceModel.class);
             mainImage.getLocalImageNames().put(bindingModel.getCountry(), bindingModel.getMainImage().getName());
             mainImage.setArticle(article);
             article.setMainImage(mainImage);
         }
-        this.articleService.createArticle(article);
+//        this.articleService.createArticle(article);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(String.format("Successfully created article %s!", bindingModel.getTitle()));

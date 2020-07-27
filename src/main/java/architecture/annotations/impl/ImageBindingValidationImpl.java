@@ -11,7 +11,10 @@ import javax.validation.ConstraintValidatorContext;
 public class ImageBindingValidationImpl implements ConstraintValidator<ImageBindingValidationEmpty, ImageBindingModel> {
     @Override
     public boolean isValid(ImageBindingModel value, ConstraintValidatorContext context) {
-        if (value == null || value.getUrl() == null || value.getName() == null) {
+        if(value==null){
+            return true;
+        }
+        if (value.getUrl() == null || value.getName() == null) {
             return false;
         }
         if (value.getName().isEmpty() && value.getUrl().isEmpty()) {

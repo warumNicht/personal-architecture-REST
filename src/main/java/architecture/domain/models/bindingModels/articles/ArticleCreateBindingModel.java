@@ -9,13 +9,8 @@ public class ArticleCreateBindingModel extends ArticleBindingModel {
     @NotNull
     private Long categoryId;
 
-    @NotNull
     @ImageBindingValidationEmpty
     private ImageBindingModel mainImage;
-
-    public ArticleCreateBindingModel() {
-        this.mainImage = new ImageBindingModel();
-    }
 
     public ImageBindingModel getMainImage() {
         return mainImage;
