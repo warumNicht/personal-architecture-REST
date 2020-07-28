@@ -5,7 +5,7 @@ import architecture.domain.models.bindingModels.images.ImageBindingModel;
 
 import javax.validation.constraints.NotNull;
 
-public class ArticleCreateBindingModel extends ArticleBindingModel {
+public class ArticleCreateModel extends ArticleCountryModel{
     @NotNull
     private Long categoryId;
 

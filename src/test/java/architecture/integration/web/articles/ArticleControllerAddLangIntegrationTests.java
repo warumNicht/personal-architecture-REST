@@ -4,7 +4,7 @@ import architecture.constants.AppConstants;
 import architecture.constants.ViewNames;
 import architecture.domain.CountryCodes;
 import architecture.domain.entities.Article;
-import architecture.domain.models.bindingModels.articles.ArticleLangBindingModel;
+import architecture.domain.models.bindingModels.articles.ArticleAddLangModel;
 import architecture.util.TestConstants;
 import org.junit.Assert;
 import org.junit.Before;
@@ -148,7 +148,7 @@ public class ArticleControllerAddLangIntegrationTests extends ArticleControllerB
                 .locale(Locale.FRANCE)
                 .contextPath("/fr")
                 .cookie(new Cookie(AppConstants.LOCALE_COOKIE_NAME, "fr"))
-                .flashAttr(ViewNames.ARTICLE_CREATE_BindingModel_Name, new ArticleLangBindingModel())
+                .flashAttr(ViewNames.ARTICLE_CREATE_BindingModel_Name, new ArticleAddLangModel())
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(model().hasErrors())
@@ -222,8 +222,8 @@ public class ArticleControllerAddLangIntegrationTests extends ArticleControllerB
     @Test
     public void patch_editLang_withRoleAdmin_validModel_returnsCorrectView_andModifiesData() throws Exception {
         Article article = super.createArticleWithImage();
-        ArticleLangBindingModel bindingModel = this.getValidArticleLangBindingModel();
-        bindingModel.setId(article.getId());
+        ArticleAddLangModel bindingModel = this.getValidArticleLangBindingModel();
+//        bindingModel.setId(article.getId());
 
         String requestBody = super.getJsonFromObject(bindingModel);
 
@@ -276,7 +276,7 @@ public class ArticleControllerAddLangIntegrationTests extends ArticleControllerB
 
     @Test
     public void patch_editLang_withRoleAdmin_invalidModel_returnsForm() throws Exception {
-        String requestBody = super.getJsonFromObject(new ArticleLangBindingModel());
+        String requestBody = super.getJsonFromObject(new ArticleAddLangModel());
 
         MockHttpServletResponse response = super.mockMvc.perform(patch("/fr/admin/articles/edit/")
                 .locale(Locale.FRANCE)
@@ -294,8 +294,8 @@ public class ArticleControllerAddLangIntegrationTests extends ArticleControllerB
 
     @Test
     public void patch_editLang_withRoleAdmin_nonexistentArticle_returnsNotFound() throws Exception {
-        ArticleLangBindingModel bindingModel = this.getValidArticleLangBindingModel();
-        bindingModel.setId(345L);
+        ArticleAddLangModel bindingModel = this.getValidArticleLangBindingModel();
+//        bindingModel.setId(345L);
         String requestBody = super.getJsonFromObject(bindingModel);
 
         super.mockMvc.perform(patch("/fr/admin/articles/edit/")
@@ -310,8 +310,8 @@ public class ArticleControllerAddLangIntegrationTests extends ArticleControllerB
                 .andDo(print());
     }
 
-    private ArticleLangBindingModel getValidArticleLangBindingModel() {
-        ArticleLangBindingModel model = new ArticleLangBindingModel();
+    private ArticleAddLangModel getValidArticleLangBindingModel() {
+        ArticleAddLangModel model = new ArticleAddLangModel();
         model.setTitle(TestConstants.ARTICLE_VALID_TITLE_2);
         model.setContent(TestConstants.ARTICLE_VALID_CONTENT_2);
         model.setCountry(CountryCodes.FR);

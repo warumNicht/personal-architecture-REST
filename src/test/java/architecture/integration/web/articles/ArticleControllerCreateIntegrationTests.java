@@ -6,7 +6,7 @@ import architecture.constants.AppConstants;
 import architecture.constants.ViewNames;
 import architecture.domain.CountryCodes;
 import architecture.domain.entities.Article;
-import architecture.domain.models.bindingModels.articles.ArticleCreateBindingModel;
+import architecture.domain.models.bindingModels.articles.ArticleCreateModel;
 import architecture.domain.models.bindingModels.images.ImageBindingModel;
 import architecture.util.TestConstants;
 import org.junit.Assert;
@@ -208,7 +208,7 @@ public class ArticleControllerCreateIntegrationTests extends ArticleControllerBa
                 .contextPath("/fr")
                 .cookie(new Cookie(AppConstants.LOCALE_COOKIE_NAME, "fr"))
                 .param(ViewNames.ARTICLE_CREATE_Category_Id, "")
-                .flashAttr(ViewNames.ARTICLE_CREATE_BindingModel_Name, new ArticleCreateBindingModel())
+                .flashAttr(ViewNames.ARTICLE_CREATE_BindingModel_Name, new ArticleCreateModel())
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(view().name(ViewNames.ARTICLE_CREATE))
@@ -222,7 +222,7 @@ public class ArticleControllerCreateIntegrationTests extends ArticleControllerBa
                 .contextPath("/fr")
                 .cookie(new Cookie(AppConstants.LOCALE_COOKIE_NAME, "fr"))
                 .param(ViewNames.ARTICLE_CREATE_Category_Id, "invalidId")
-                .flashAttr(ViewNames.ARTICLE_CREATE_BindingModel_Name, new ArticleCreateBindingModel())
+                .flashAttr(ViewNames.ARTICLE_CREATE_BindingModel_Name, new ArticleCreateModel())
                 .with(csrf()))
                 .andDo(print());
 
@@ -248,7 +248,7 @@ public class ArticleControllerCreateIntegrationTests extends ArticleControllerBa
     //Country
     @Test
     public void post_createArticle_withNullCountry_returnsForm() throws Exception {
-        ArticleCreateBindingModel invalidModel = this.getCorrectBindingModel();
+        ArticleCreateModel invalidModel = this.getCorrectBindingModel();
         invalidModel.setCountry(null);
         super.mockMvc.perform(post("/fr/admin/articles/create")
                 .locale(Locale.FRANCE)
@@ -265,7 +265,7 @@ public class ArticleControllerCreateIntegrationTests extends ArticleControllerBa
 
     @Test
     public void post_createArticle_withInvalidCountry_returnsErrorPage() throws Exception {
-        ArticleCreateBindingModel invalidModel = this.getCorrectBindingModel();
+        ArticleCreateModel invalidModel = this.getCorrectBindingModel();
         invalidModel.setCountry(null);
         super.mockMvc.perform(post("/fr/admin/articles/create")
                 .locale(Locale.FRANCE)
@@ -287,7 +287,7 @@ public class ArticleControllerCreateIntegrationTests extends ArticleControllerBa
     //Url
     @Test
     public void post_createArticle_withNullUrl_returnsForm() throws Exception {
-        ArticleCreateBindingModel invalidModel = this.getCorrectBindingModel();
+        ArticleCreateModel invalidModel = this.getCorrectBindingModel();
         invalidModel.getMainImage().setUrl(null);
         super.mockMvc.perform(post("/fr/admin/articles/create")
                 .locale(Locale.FRANCE)
@@ -303,7 +303,7 @@ public class ArticleControllerCreateIntegrationTests extends ArticleControllerBa
 
     @Test
     public void post_createArticle_invalidUrl_returnsForm() throws Exception {
-        ArticleCreateBindingModel invalidModel = this.getFullCorrectBindingModel();
+        ArticleCreateModel invalidModel = this.getFullCorrectBindingModel();
         invalidModel.getMainImage().setUrl("invalidUrl");
         super.mockMvc.perform(post("/fr/admin/articles/create")
                 .locale(Locale.FRANCE)
@@ -321,7 +321,7 @@ public class ArticleControllerCreateIntegrationTests extends ArticleControllerBa
     //Title
     @Test
     public void post_createArticle_withNullTitle_returnsForm() throws Exception {
-        ArticleCreateBindingModel invalidModel = this.getCorrectBindingModel();
+        ArticleCreateModel invalidModel = this.getCorrectBindingModel();
         invalidModel.setTitle(null);
         super.mockMvc.perform(post("/fr/admin/articles/create")
                 .locale(Locale.FRANCE)
@@ -337,7 +337,7 @@ public class ArticleControllerCreateIntegrationTests extends ArticleControllerBa
 
     @Test
     public void post_createArticle_withEmptyTitle_returnsForm() throws Exception {
-        ArticleCreateBindingModel invalidModel = this.getCorrectBindingModel();
+        ArticleCreateModel invalidModel = this.getCorrectBindingModel();
         invalidModel.setTitle("");
         super.mockMvc.perform(post("/fr/admin/articles/create")
                 .locale(Locale.FRANCE)
@@ -353,7 +353,7 @@ public class ArticleControllerCreateIntegrationTests extends ArticleControllerBa
 
     @Test
     public void post_createArticle_withLowercaseTitle_returnsForm() throws Exception {
-        ArticleCreateBindingModel invalidModel = this.getCorrectBindingModel();
+        ArticleCreateModel invalidModel = this.getCorrectBindingModel();
         invalidModel.setTitle("title");
         super.mockMvc.perform(post("/fr/admin/articles/create")
                 .locale(Locale.FRANCE)
@@ -370,7 +370,7 @@ public class ArticleControllerCreateIntegrationTests extends ArticleControllerBa
 
     @Test
     public void post_createArticle_withTitleLessThen2_returnsForm() throws Exception {
-        ArticleCreateBindingModel invalidModel = this.getCorrectBindingModel();
+        ArticleCreateModel invalidModel = this.getCorrectBindingModel();
         invalidModel.setTitle("T");
         super.mockMvc.perform(post("/fr/admin/articles/create")
                 .locale(Locale.FRANCE)
@@ -385,8 +385,8 @@ public class ArticleControllerCreateIntegrationTests extends ArticleControllerBa
                 .andDo(print());
     }
 
-    private ArticleCreateBindingModel getCorrectBindingModel() {
-        ArticleCreateBindingModel model = new ArticleCreateBindingModel();
+    private ArticleCreateModel getCorrectBindingModel() {
+        ArticleCreateModel model = new ArticleCreateModel();
         model.setTitle(TestConstants.ARTICLE_VALID_TITLE);
         model.setContent(TestConstants.ARTICLE_VALID_CONTENT);
         model.setCountry(CountryCodes.FR);
@@ -396,8 +396,8 @@ public class ArticleControllerCreateIntegrationTests extends ArticleControllerBa
         return model;
     }
 
-    private ArticleCreateBindingModel getFullCorrectBindingModel() {
-        ArticleCreateBindingModel correctBindingModel = this.getCorrectBindingModel();
+    private ArticleCreateModel getFullCorrectBindingModel() {
+        ArticleCreateModel correctBindingModel = this.getCorrectBindingModel();
         correctBindingModel.getMainImage().setUrl(TestConstants.IMAGE_URL);
         correctBindingModel.getMainImage().setName(TestConstants.IMAGE_FR_NAME_2);
         return correctBindingModel;
