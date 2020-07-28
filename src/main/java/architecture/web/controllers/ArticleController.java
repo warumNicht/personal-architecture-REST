@@ -131,22 +131,25 @@ public class ArticleController extends BaseController {
                 .body(bindingModel);
     }
 
-//    @ResponseBody
-//    @RequestMapping(method = {RequestMethod.PATCH}, value = "/edit", produces = {MediaType.APPLICATION_JSON_VALUE})
-//    @ResponseStatus(code = HttpStatus.ACCEPTED)
-//    public Object editArticleLangPut(@Valid @RequestBody ArticleLangBindingModel model, BindingResult bindingResult) {
-//        if (bindingResult.hasErrors()) {
-//            return super.getBindingErrorsMap(bindingResult.getAllErrors());
-//        }
-//        ArticleServiceModel articleServiceModel = this.articleService.findById(model.getId());
-//        LocalisedArticleContentServiceModel content = this.modelMapper.map(model, LocalisedArticleContentServiceModel.class);
-//        articleServiceModel.getLocalContent().put(model.getCountry(), content);
-//        if (articleServiceModel.getMainImage() != null) {
-//            articleServiceModel.getMainImage().getLocalImageNames().put(model.getCountry(), model.getMainImage());
-//        }
-//        this.articleService.updateArticle(articleServiceModel);
-//        return "\"/" + super.getLocale() + "/admin/articles/edit/" + model.getId() + "\"";
-//    }
+    @PatchMapping(value = "/edit/{id}/{lang}")
+    public ResponseEntity editArticleLangPatch(@PathVariable(name = "id") Long id, @PathVariable(name = "lang") CountryCodes lang,
+                                             @Valid @RequestBody ArticleEditLangModel model, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_ACCEPTABLE)
+                    .body(super.getBindingErrorsMap(bindingResult.getAllErrors()));
+        }
+        ArticleServiceModel articleServiceModel = this.articleService.findById(id);
+        LocalisedArticleContentServiceModel content = this.modelMapper.map(model, LocalisedArticleContentServiceModel.class);
+        articleServiceModel.getLocalContent().put(lang, content);
+        if (articleServiceModel.getMainImage() != null) {
+            articleServiceModel.getMainImage().getLocalImageNames().put(lang, model.getMainImage());
+        }
+        this.articleService.updateArticle(articleServiceModel);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Successfully edited language!");
+    }
 
     @GetMapping(value = "/edit/{id}")
     public ResponseEntity editArticle(@PathVariable(name = "id") Long id) {
