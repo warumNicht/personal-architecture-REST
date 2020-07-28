@@ -50,13 +50,6 @@ public class ArticleController extends BaseController {
         this.modelMapper = modelMapper;
     }
 
-    @GetMapping("/create")
-    public String createArticle(@ModelAttribute(name = "articleBinding") ArticleCreateModel articleCreateBindingModel, Model model) {
-        model.addAttribute("articleBinding", articleCreateBindingModel);
-        model.addAttribute("categoryId", "");
-        return ViewNames.ARTICLE_CREATE;
-    }
-
     @PostMapping("/create")
     public ResponseEntity createArticlePost(@Valid @RequestBody ArticleCreateModel bindingModel,
                                     BindingResult bindingResult) {
