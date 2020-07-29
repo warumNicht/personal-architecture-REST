@@ -3,6 +3,7 @@ package architecture.error;
 import architecture.constants.ViewNames;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -51,7 +52,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(value = Exception.class)
-    public ModelAndView defaultErrorHandler(HttpServletRequest req, Exception e) throws Exception {
+    public ResponseEntity defaultErrorHandler(HttpServletRequest req, Exception e) throws Exception {
         // If the exception is annotated with @ResponseStatus rethrow it and let
         // the framework handle it - like the OrderNotFoundException example
         // at the start of this post.
@@ -60,11 +61,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 (e.getClass(), ResponseStatus.class) != null)
             throw e;
 
-        // Otherwise setup and send the user to a default error-view.
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("exception", e);
-        mav.setViewName(ViewNames.DEFAULT_ERROR);
-        return mav;
+        // Otherwise send error object
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new HashMap<>() {{
+            put("error", e.getMessage());
+            put("timestamp", new Date());
+        }});
     }
 
 
