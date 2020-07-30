@@ -80,4 +80,26 @@ public class ArticleServiceImpl implements ArticleService {
         }
         return localisedArticles;
     }
+
+    @Override
+    public List<ArticleLocalViewModel> findAllLocalisedArticles( CountryCodes wantedCode) {
+        Object[] all = this.articleRepository.findAllArticles(CountryCodes.BG, wantedCode);
+
+        List<ArticleLocalViewModel> localisedArticles = new ArrayList<>();
+        for (Object article : all) {
+            Object[] articleObjects = (Object[]) article;
+            ArticleLocalViewModel articleLocalViewModel = new ArticleLocalViewModel();
+            articleLocalViewModel.setId((Long) articleObjects[0]);
+            if (articleObjects[1] != null) {
+                articleLocalViewModel
+                        .setMainImage(new ImageLocaleViewModel((String) articleObjects[1], (String) articleObjects[2]));
+            }
+            articleLocalViewModel.setDate((Date) articleObjects[3]);
+            LocalisedArticleContent localisedArticleContent = (LocalisedArticleContent) articleObjects[4];
+            articleLocalViewModel.setLocalisedContent(
+                    this.modelMapper.map(localisedArticleContent, LocalisedArticleContentViewModel.class));
+            localisedArticles.add(articleLocalViewModel);
+        }
+        return localisedArticles;
+    }
 }
