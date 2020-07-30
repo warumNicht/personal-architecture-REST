@@ -3,6 +3,7 @@ package architecture.web.controllers;
 import architecture.constants.ViewNames;
 import architecture.domain.CountryCodes;
 import architecture.domain.models.viewModels.articles.ArticleLocalViewModel;
+import architecture.domain.models.viewModels.articles.ArticleSimpleViewModel;
 import architecture.services.interfaces.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,8 +38,9 @@ public class ProjectController extends BaseController {
     @GetMapping(value = "/category/all")
     public ResponseEntity allProjects() {
         CountryCodes wantedCode = super.getCurrentCookieLocale();
-        List<ArticleLocalViewModel> localisedArticles = this.articleService.findAllLocalisedArticles(wantedCode);
+//        List<ArticleLocalViewModel> localisedArticles = this.articleService.findAllLocalisedArticles(wantedCode);
+        List<ArticleSimpleViewModel> articles = this.articleService.findAllLocalisedArticles2(wantedCode);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(localisedArticles);
+                .body(articles);
     }
 }

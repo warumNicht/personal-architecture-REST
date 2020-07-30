@@ -7,6 +7,7 @@ import architecture.domain.models.serviceModels.article.ArticleServiceModel;
 import architecture.domain.models.viewModels.ImageLocaleViewModel;
 import architecture.domain.models.viewModels.LocalisedArticleContentViewModel;
 import architecture.domain.models.viewModels.articles.ArticleLocalViewModel;
+import architecture.domain.models.viewModels.articles.ArticleSimpleViewModel;
 import architecture.error.NotFoundException;
 import architecture.repositories.ArticleRepository;
 import architecture.services.interfaces.ArticleService;
@@ -59,9 +60,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public List<ArticleLocalViewModel> findArticlesByCategory(Long id, CountryCodes wantedCode) {
-        Object[] all;
-        all = id == 555 ? this.articleRepository.findAllArticles(CountryCodes.BG, wantedCode)
-                : this.articleRepository.getAllByCategory(CountryCodes.BG, wantedCode, id);
+        Object[] all = this.articleRepository.getAllByCategory(CountryCodes.BG, wantedCode, id);
 
         List<ArticleLocalViewModel> localisedArticles = new ArrayList<>();
         for (Object article : all) {
@@ -82,7 +81,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<ArticleLocalViewModel> findAllLocalisedArticles( CountryCodes wantedCode) {
+    public List<ArticleLocalViewModel> findAllLocalisedArticles(CountryCodes wantedCode) {
         Object[] all = this.articleRepository.findAllArticles(CountryCodes.BG, wantedCode);
 
         List<ArticleLocalViewModel> localisedArticles = new ArrayList<>();
@@ -101,5 +100,26 @@ public class ArticleServiceImpl implements ArticleService {
             localisedArticles.add(articleLocalViewModel);
         }
         return localisedArticles;
+    }
+
+    @Override
+    public List<ArticleSimpleViewModel> findAllLocalisedArticles2(CountryCodes wantedCode) {
+        Object[] all = this.articleRepository.findAllArticles(CountryCodes.BG, wantedCode);
+
+        List<ArticleSimpleViewModel> articles = new ArrayList<>();
+        for (Object article : all) {
+            Object[] articleObjects = (Object[]) article;
+            ArticleSimpleViewModel currentArticle = new ArticleSimpleViewModel();
+
+            currentArticle.setId((Long) articleObjects[0]);
+            if (articleObjects[1] != null) {
+                currentArticle
+                        .setMainImage(new ImageLocaleViewModel((String) articleObjects[1], (String) articleObjects[2]));
+            }
+            currentArticle.setCategoryId((Long) articleObjects[3]);
+            currentArticle.setTitle((String) articleObjects[4]);
+            articles.add(currentArticle);
+        }
+        return articles;
     }
 }

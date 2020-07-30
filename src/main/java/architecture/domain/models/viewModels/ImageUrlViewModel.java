@@ -2,13 +2,13 @@ package architecture.domain.models.viewModels;
 
 import architecture.domain.models.BaseModel;
 
-public class ImageSimpleViewModel extends BaseModel {
+public class ImageUrlViewModel extends BaseModel {
     private String url;
 
-    public ImageSimpleViewModel() {
+    public ImageUrlViewModel() {
     }
 
-    public ImageSimpleViewModel(String url) {
+    public ImageUrlViewModel(String url) {
         this.url = url;
     }
 

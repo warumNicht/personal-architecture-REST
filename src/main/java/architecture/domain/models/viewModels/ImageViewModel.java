@@ -5,7 +5,7 @@ import architecture.domain.CountryCodes;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ImageViewModel extends ImageSimpleViewModel {
+public class ImageViewModel extends ImageUrlViewModel {
     private Map<CountryCodes, String> localImageNames = new HashMap<>();
 
     public Map<CountryCodes, String> getLocalImageNames() {
