@@ -1,14 +1,12 @@
 package architecture.domain.models.viewModels.articles.partial;
 
-import architecture.domain.models.viewModels.ImageLocaleViewModel;
-
 public class WholeArticle {
     private Long id;
     private Long categoryId;
     private ImageNameUrl mainImage;
     private String title;
     private String content;
-    private AdminContent adminContent;
+    private AdminContent admin;
 
     public Long getId() {
         return id;
@@ -50,11 +48,11 @@ public class WholeArticle {
         this.content = content;
     }
 
-    public AdminContent getAdminContent() {
-        return adminContent;
+    public AdminContent getAdmin() {
+        return admin;
     }
 
-    public void setAdminContent(AdminContent adminContent) {
-        this.adminContent = adminContent;
+    public void setAdmin(AdminContent admin) {
+        this.admin = admin;
     }
 }

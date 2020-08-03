@@ -1,6 +1,5 @@
 package architecture.web.controllers;
 
-import architecture.constants.AppConstants;
 import architecture.constants.ViewNames;
 import architecture.domain.CountryCodes;
 import architecture.domain.models.bindingModels.articles.ArticleAddImageBindingModel;
@@ -154,14 +153,18 @@ public class ArticleController extends BaseController {
 
 
         AdminContent adminContent = new AdminContent();
-        Map<String, String> localTitles = articleServiceModel.getLocalContent().entrySet().stream()
+        Map<String, Object> localTitles = articleServiceModel.getLocalContent().entrySet().stream()
                 .collect(Collectors.toMap(kv -> kv.getKey().toString(), kv -> kv.getValue().getTitle()));
-        adminContent.setLocalTitles(localTitles);
-
         LanguageContent languageContent = new LanguageContent();
 
         languageContent.setTitle(localisedArticleContent.getTitle());
         languageContent.setContent(localisedArticleContent.getContent());
+
+        localTitles.put(lang.toString(), languageContent);
+
+        adminContent.setLocalContent(localTitles);
+
+
 
         if(articleServiceModel.getMainImage() != null){
             String localImageName = articleServiceModel.getMainImage().getLocalImageNames().get(lang);
@@ -172,8 +175,7 @@ public class ArticleController extends BaseController {
             languageContent.setMainImageName(articleServiceModel.getMainImage().getLocalImageNames().get(lang));
         }
 
-        adminContent.setLanguageContent(languageContent);
-        article.setAdminContent(adminContent);
+        article.setAdmin(adminContent);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
