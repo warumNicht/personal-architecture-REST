@@ -5,7 +5,7 @@ import architecture.domain.entities.Article;
 import architecture.domain.entities.LocalisedArticleContent;
 import architecture.domain.models.serviceModels.article.ArticleServiceModel;
 import architecture.domain.models.viewModels.ImageLocaleViewModel;
-import architecture.domain.models.viewModels.LocalisedArticleContentViewModel;
+import architecture.domain.models.viewModels.LocalisedArticleTitlesViewModel;
 import architecture.domain.models.viewModels.articles.ArticleLocalViewModel;
 import architecture.domain.models.viewModels.articles.ArticleSimpleViewModel;
 import architecture.error.NotFoundException;
@@ -74,7 +74,7 @@ public class ArticleServiceImpl implements ArticleService {
             articleLocalViewModel.setDate((Date) articleObjects[3]);
             LocalisedArticleContent localisedArticleContent = (LocalisedArticleContent) articleObjects[4];
             articleLocalViewModel.setLocalisedContent(
-                    this.modelMapper.map(localisedArticleContent, LocalisedArticleContentViewModel.class));
+                    this.modelMapper.map(localisedArticleContent, LocalisedArticleTitlesViewModel.class));
             localisedArticles.add(articleLocalViewModel);
         }
         return localisedArticles;
@@ -96,7 +96,7 @@ public class ArticleServiceImpl implements ArticleService {
             articleLocalViewModel.setDate((Date) articleObjects[3]);
             LocalisedArticleContent localisedArticleContent = (LocalisedArticleContent) articleObjects[4];
             articleLocalViewModel.setLocalisedContent(
-                    this.modelMapper.map(localisedArticleContent, LocalisedArticleContentViewModel.class));
+                    this.modelMapper.map(localisedArticleContent, LocalisedArticleTitlesViewModel.class));
             localisedArticles.add(articleLocalViewModel);
         }
         return localisedArticles;
@@ -113,8 +113,7 @@ public class ArticleServiceImpl implements ArticleService {
 
             currentArticle.setId((Long) articleObjects[0]);
             if (articleObjects[1] != null) {
-                currentArticle
-                        .setMainImage(new ImageLocaleViewModel((String) articleObjects[1], (String) articleObjects[2]));
+                currentArticle.setMainImage((String) articleObjects[1]);
             }
             currentArticle.setCategoryId((Long) articleObjects[3]);
             currentArticle.setTitle((String) articleObjects[4]);

@@ -1,12 +1,11 @@
 package architecture.domain.models.viewModels.articles;
 
 import architecture.domain.models.BaseModel;
-import architecture.domain.models.viewModels.ImageLocaleViewModel;
 
 public class ArticleSimpleViewModel extends BaseModel {
     private String title;
     private Long categoryId;
-    private ImageLocaleViewModel mainImage;
+    private String mainImage;
 
     public String getTitle() {
         return title;
@@ -24,11 +23,11 @@ public class ArticleSimpleViewModel extends BaseModel {
         this.categoryId = categoryId;
     }
 
-    public ImageLocaleViewModel getMainImage() {
+    public String getMainImage() {
         return mainImage;
     }
 
-    public void setMainImage(ImageLocaleViewModel mainImage) {
+    public void setMainImage(String mainImage) {
         this.mainImage = mainImage;
     }
 }

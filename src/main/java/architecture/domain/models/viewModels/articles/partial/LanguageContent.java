@@ -1,17 +1,9 @@
-package architecture.domain.models.viewModels;
+package architecture.domain.models.viewModels.articles.partial;
 
-
-public class LocalisedArticleContentViewModel {
+public class LanguageContent {
     private String title;
     private String content;
-
-    public LocalisedArticleContentViewModel() {
-    }
-
-    public LocalisedArticleContentViewModel(String title, String content) {
-        this.title = title;
-        this.content = content;
-    }
+    private String mainImageName;
 
     public String getTitle() {
         return title;
@@ -27,5 +19,13 @@ public class LocalisedArticleContentViewModel {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getMainImageName() {
+        return mainImageName;
+    }
+
+    public void setMainImageName(String mainImageName) {
+        this.mainImageName = mainImageName;
     }
 }
