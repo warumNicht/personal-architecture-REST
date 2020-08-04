@@ -12,9 +12,7 @@ import architecture.domain.models.serviceModels.article.ArticleServiceModel;
 import architecture.domain.models.serviceModels.article.LocalisedArticleContentServiceModel;
 import architecture.domain.models.viewModels.articles.ArticleAddImageViewModel;
 import architecture.domain.models.viewModels.articles.ArticleEditViewModel;
-import architecture.domain.models.viewModels.articles.partial.AdminContent;
-import architecture.domain.models.viewModels.articles.partial.LanguageContent;
-import architecture.domain.models.viewModels.articles.partial.WholeArticle;
+import architecture.domain.models.viewModels.articles.partial.*;
 import architecture.error.NotFoundException;
 import architecture.error.RestException;
 import architecture.services.interfaces.ArticleService;
@@ -154,10 +152,9 @@ public class ArticleController extends BaseController {
 
         AdminContent adminContent = new AdminContent();
         Map<String, Object> localTitles = articleServiceModel.getLocalContent().entrySet().stream()
-                .collect(Collectors.toMap(kv -> kv.getKey().toString(), kv -> kv.getValue().getTitle()));
-        LanguageContent languageContent = new LanguageContent();
+                .collect(Collectors.toMap(kv -> kv.getKey().toString(), kv -> new TitleViewModel(kv.getValue().getTitle())));
 
-        languageContent.setTitle(localisedArticleContent.getTitle());
+        LanguageContent languageContent = new LanguageContent(localisedArticleContent.getTitle());
         languageContent.setContent(localisedArticleContent.getContent());
 
         localTitles.put(lang.toString(), languageContent);
@@ -180,6 +177,50 @@ public class ArticleController extends BaseController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(article);
+    }
+
+    @GetMapping(value = "/edit/{id}/{lang}/admin")
+    public ResponseEntity getAdminArticleByLang(@PathVariable(name = "id") Long id, @PathVariable(name = "lang") CountryCodes lang) {
+        ArticleServiceModel articleServiceModel = this.articleService.findById(id);
+        LocalisedArticleContentServiceModel localisedArticleContent = articleServiceModel.getLocalContent().get(lang);
+        if (localisedArticleContent == null) {
+            throw new NotFoundException("country.nonexistent");
+        }
+
+        Map<String, Object> localContent = articleServiceModel.getLocalContent().entrySet().stream()
+                .collect(Collectors.toMap(kv -> kv.getKey().toString(), kv -> new TitleViewModel(kv.getValue().getTitle())));
+
+        LanguageContent languageContent = new LanguageContent(localisedArticleContent.getTitle());
+        languageContent.setContent(localisedArticleContent.getContent());
+
+        if(articleServiceModel.getMainImage() != null){
+            String localImageName = articleServiceModel.getMainImage().getLocalImageNames().get(lang);
+            languageContent.setMainImageName(localImageName);
+        }
+        localContent.put(lang.toString(), languageContent);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(localContent);
+    }
+
+    @GetMapping(value = "/edit/{id}/{lang}/content")
+    public ResponseEntity getArticleContentByLang(@PathVariable(name = "id") Long id, @PathVariable(name = "lang") CountryCodes lang) {
+        ArticleServiceModel articleServiceModel = this.articleService.findById(id);
+        LocalisedArticleContentServiceModel localisedArticleContent = articleServiceModel.getLocalContent().get(lang);
+        if (localisedArticleContent == null) {
+            throw new NotFoundException("country.nonexistent");
+        }
+
+        ContentImageNameViewModel contentImageNameViewModel = new ContentImageNameViewModel();
+        contentImageNameViewModel.setContent(localisedArticleContent.getContent());
+        if(articleServiceModel.getMainImage() != null){
+            String localImageName = articleServiceModel.getMainImage().getLocalImageNames().get(lang);
+            contentImageNameViewModel.setMainImageName(localImageName);
+        }
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(contentImageNameViewModel);
     }
 
     @PatchMapping(value = "/edit/{id}/{lang}")

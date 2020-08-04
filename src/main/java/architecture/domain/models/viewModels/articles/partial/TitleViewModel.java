@@ -1,9 +1,9 @@
 package architecture.domain.models.viewModels.articles.partial;
 
-public class LanguageContent extends ContentImageNameViewModel{
+public class TitleViewModel {
     private String title;
 
-    public LanguageContent(String title) {
+    public TitleViewModel(String title) {
         this.title = title;
     }
 
