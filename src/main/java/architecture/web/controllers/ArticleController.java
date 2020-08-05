@@ -20,6 +20,7 @@ import architecture.services.interfaces.CategoryService;
 import architecture.services.interfaces.ImageService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -118,22 +119,22 @@ public class ArticleController extends BaseController {
                 .body("Successfully added language!");
     }
 
-    @GetMapping(value = "/edit/{id}/{lang}")
-    public ResponseEntity editArticleLang(@PathVariable(name = "id") Long id, @PathVariable(name = "lang") CountryCodes lang) {
-        ArticleServiceModel articleServiceModel = this.articleService.findById(id);
-        LocalisedArticleContentServiceModel localisedArticleContentServiceModel = articleServiceModel.getLocalContent().get(lang);
-        if (localisedArticleContentServiceModel == null) {
-            throw new NotFoundException("country.nonexistent");
-        }
-        ArticleEditLangModel bindingModel = this.modelMapper.map(localisedArticleContentServiceModel, ArticleEditLangModel.class);
-        if (articleServiceModel.getMainImage() != null) {
-            String imageName = articleServiceModel.getMainImage().getLocalImageNames().get(lang);
-            bindingModel.setMainImage(imageName == null ? "" : imageName);
-        }
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(bindingModel);
-    }
+//    @GetMapping(value = "/edit/{id}/{lang}")
+//    public ResponseEntity editArticleLang(@PathVariable(name = "id") Long id, @PathVariable(name = "lang") CountryCodes lang) {
+//        ArticleServiceModel articleServiceModel = this.articleService.findById(id);
+//        LocalisedArticleContentServiceModel localisedArticleContentServiceModel = articleServiceModel.getLocalContent().get(lang);
+//        if (localisedArticleContentServiceModel == null) {
+//            throw new NotFoundException("country.nonexistent");
+//        }
+//        ArticleEditLangModel bindingModel = this.modelMapper.map(localisedArticleContentServiceModel, ArticleEditLangModel.class);
+//        if (articleServiceModel.getMainImage() != null) {
+//            String imageName = articleServiceModel.getMainImage().getLocalImageNames().get(lang);
+//            bindingModel.setMainImage(imageName == null ? "" : imageName);
+//        }
+//        return ResponseEntity
+//                .status(HttpStatus.OK)
+//                .body(bindingModel);
+//    }
 
     @GetMapping(value = "/edit/{id}/{lang}/all")
     public ResponseEntity getWholeArticleByLang(@PathVariable(name = "id") Long id, @PathVariable(name = "lang") CountryCodes lang) {
@@ -172,6 +173,68 @@ public class ArticleController extends BaseController {
             languageContent.setMainImageName(articleServiceModel.getMainImage().getLocalImageNames().get(lang));
         }
 
+        article.setAdmin(adminContent);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(article);
+    }
+
+    @GetMapping(value = "/edit/{id}/{lang}")
+    public ResponseEntity getArticleByLangAndParam(@PathVariable(name = "id") Long id,
+                                                   @PathVariable(name = "lang") CountryCodes lang,
+                                                   @RequestParam (name = "filter", required = false) String filter) {
+        ArticleServiceModel articleServiceModel = this.articleService.findById(id);
+        LocalisedArticleContentServiceModel localisedArticleContent = articleServiceModel.getLocalContent().get(lang);
+        if (localisedArticleContent == null) {
+            throw new NotFoundException("country.nonexistent");
+        }
+
+        if("content".equals(filter)){
+            ContentImageNameViewModel contentImageNameViewModel = new ContentImageNameViewModel();
+            contentImageNameViewModel.setContent(localisedArticleContent.getContent());
+            if(articleServiceModel.getMainImage() != null){
+                String localImageName = articleServiceModel.getMainImage().getLocalImageNames().get(lang);
+                contentImageNameViewModel.setMainImageName(localImageName);
+            }
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(contentImageNameViewModel);
+        }
+
+        Map<String, Object> localContent = articleServiceModel.getLocalContent().entrySet().stream()
+                .collect(Collectors.toMap(kv -> kv.getKey().toString(), kv -> new TitleViewModel(kv.getValue().getTitle())));
+        LanguageContent languageContent = new LanguageContent(localisedArticleContent.getTitle());
+        languageContent.setContent(localisedArticleContent.getContent());
+
+        if(articleServiceModel.getMainImage() != null){
+            String localImageName = articleServiceModel.getMainImage().getLocalImageNames().get(lang);
+            languageContent.setMainImageName(localImageName);
+        }
+        localContent.put(lang.toString(), languageContent);
+
+        if("map".equals(filter)){
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(localContent);
+
+        }
+
+        WholeArticle article = this.modelMapper.map(articleServiceModel, WholeArticle.class);
+        article.setTitle(localisedArticleContent.getTitle());
+        article.setContent(localisedArticleContent.getContent());
+
+        if(articleServiceModel.getMainImage() != null){
+            String localImageName = articleServiceModel.getMainImage().getLocalImageNames().get(lang);
+            if(localImageName==null){
+                localImageName = articleServiceModel.getMainImage().getLocalImageNames().get(DEFAULT_COUNTRY_CODE);
+            }
+            article.getMainImage().setName(localImageName);
+            languageContent.setMainImageName(articleServiceModel.getMainImage().getLocalImageNames().get(lang));
+        }
+
+        AdminContent adminContent = new AdminContent();
+        adminContent.setLocalContent(localContent);
         article.setAdmin(adminContent);
 
         return ResponseEntity
