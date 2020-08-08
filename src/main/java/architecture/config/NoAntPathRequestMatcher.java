@@ -19,6 +19,13 @@ public class NoAntPathRequestMatcher implements RequestMatcher {
     @Override
     public boolean matches(HttpServletRequest request) {
         System.out.println(request.getRequestURI());
+        String method = request.getMethod();
+        String requestURI = request.getRequestURI();
+
+        // enable CSFR protection when GET on admin
+        if("GET".equals(method) && request.getRequestURI().contains("admin/articles/edit/")){
+            return true;
+        }
         // If the request match one url the CSFR protection will be disabled
         for (AntPathRequestMatcher rm : requestMatchers) {
             if (rm.matches(request)) {

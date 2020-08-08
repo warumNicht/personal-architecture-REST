@@ -2,7 +2,7 @@ package architecture.web.controllers;
 
 import architecture.domain.CountryCodes;
 import architecture.domain.entities.LocalisedArticleContent;
-import architecture.domain.models.viewModels.LocalisedArticleContentViewModel;
+import architecture.domain.models.viewModels.LocalisedArticleTitlesViewModel;
 import architecture.domain.models.viewModels.articles.ArticleLocalViewModel;
 import architecture.repositories.ArticleRepository;
 import org.modelmapper.ModelMapper;
@@ -42,7 +42,7 @@ public class HomeController extends BaseController {
             articleLocalViewModel.setId((Long) articleObjects[0]);
             articleLocalViewModel.setDate((Date) articleObjects[1]);
             LocalisedArticleContent localisedArticleContent = (LocalisedArticleContent) articleObjects[2];
-            articleLocalViewModel.setLocalisedContent(this.modelMapper.map(localisedArticleContent, LocalisedArticleContentViewModel.class));
+            articleLocalViewModel.setLocalisedContent(this.modelMapper.map(localisedArticleContent, LocalisedArticleTitlesViewModel.class));
             localisedArticles.add(articleLocalViewModel);
         }
         modelAndView.addObject("localizedArticles", localisedArticles);

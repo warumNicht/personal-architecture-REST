@@ -1,6 +1,5 @@
 package architecture.web.controllers;
 
-import architecture.constants.AppConstants;
 import architecture.constants.ViewNames;
 import architecture.domain.CountryCodes;
 import architecture.domain.models.bindingModels.articles.ArticleAddImageBindingModel;
@@ -13,6 +12,7 @@ import architecture.domain.models.serviceModels.article.ArticleServiceModel;
 import architecture.domain.models.serviceModels.article.LocalisedArticleContentServiceModel;
 import architecture.domain.models.viewModels.articles.ArticleAddImageViewModel;
 import architecture.domain.models.viewModels.articles.ArticleEditViewModel;
+import architecture.domain.models.viewModels.articles.partial.*;
 import architecture.error.NotFoundException;
 import architecture.error.RestException;
 import architecture.services.interfaces.ArticleService;
@@ -20,6 +20,7 @@ import architecture.services.interfaces.CategoryService;
 import architecture.services.interfaces.ImageService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static architecture.constants.AppConstants.DEFAULT_COUNTRY_CODE;
 
 @Controller
 @RequestMapping(value = "/admin/articles")
@@ -69,7 +74,7 @@ public class ArticleController extends BaseController {
             mainImage.setArticle(article);
             article.setMainImage(mainImage);
         }
-//        this.articleService.createArticle(article);
+        this.articleService.createArticle(article);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(String.format("Successfully created article %s!", bindingModel.getTitle()));
@@ -107,39 +112,192 @@ public class ArticleController extends BaseController {
                 .body("Successfully added language!");
     }
 
-    @GetMapping(value = "/edit/{id}/{lang}")
-    public ResponseEntity editArticleLang(@PathVariable(name = "id") Long id, @PathVariable(name = "lang") CountryCodes lang) {
+//    @GetMapping(value = "/edit/{id}/{lang}")
+//    public ResponseEntity editArticleLang(@PathVariable(name = "id") Long id, @PathVariable(name = "lang") CountryCodes lang) {
+//        ArticleServiceModel articleServiceModel = this.articleService.findById(id);
+//        LocalisedArticleContentServiceModel localisedArticleContentServiceModel = articleServiceModel.getLocalContent().get(lang);
+//        if (localisedArticleContentServiceModel == null) {
+//            throw new NotFoundException("country.nonexistent");
+//        }
+//        ArticleEditLangModel bindingModel = this.modelMapper.map(localisedArticleContentServiceModel, ArticleEditLangModel.class);
+//        if (articleServiceModel.getMainImage() != null) {
+//            String imageName = articleServiceModel.getMainImage().getLocalImageNames().get(lang);
+//            bindingModel.setMainImage(imageName == null ? "" : imageName);
+//        }
+//        return ResponseEntity
+//                .status(HttpStatus.OK)
+//                .body(bindingModel);
+//    }
+
+    @GetMapping(value = "/edit/{id}/{lang}/all")
+    public ResponseEntity getWholeArticleByLang(@PathVariable(name = "id") Long id, @PathVariable(name = "lang") CountryCodes lang) {
         ArticleServiceModel articleServiceModel = this.articleService.findById(id);
-        LocalisedArticleContentServiceModel localisedArticleContentServiceModel = articleServiceModel.getLocalContent().get(lang);
-        if (localisedArticleContentServiceModel == null) {
+        LocalisedArticleContentServiceModel localisedArticleContent = articleServiceModel.getLocalContent().get(lang);
+        if (localisedArticleContent == null) {
             throw new NotFoundException("country.nonexistent");
         }
-        ArticleEditLangModel bindingModel = this.modelMapper.map(localisedArticleContentServiceModel, ArticleEditLangModel.class);
-        if (articleServiceModel.getMainImage() != null) {
-            String imageName = articleServiceModel.getMainImage().getLocalImageNames().get(lang);
-            bindingModel.setMainImage(imageName == null ? "" : imageName);
+
+        WholeArticle article = this.modelMapper.map(articleServiceModel, WholeArticle.class);
+        CountryCodes currentLang = super.getCurrentCookieLocale();
+        article.setTitle(localisedArticleContent.getTitle());
+        article.setContent(localisedArticleContent.getContent());
+
+
+
+        AdminContent adminContent = new AdminContent();
+        Map<String, Object> localTitles = articleServiceModel.getLocalContent().entrySet().stream()
+                .collect(Collectors.toMap(kv -> kv.getKey().toString(), kv -> new TitleViewModel(kv.getValue().getTitle())));
+
+        LanguageContent languageContent = new LanguageContent(localisedArticleContent.getTitle());
+        languageContent.setContent(localisedArticleContent.getContent());
+
+        localTitles.put(lang.toString(), languageContent);
+
+        adminContent.setLocalContent(localTitles);
+
+
+
+        if(articleServiceModel.getMainImage() != null){
+            String localImageName = articleServiceModel.getMainImage().getLocalImageNames().get(lang);
+            if(localImageName==null){
+                localImageName = articleServiceModel.getMainImage().getLocalImageNames().get(DEFAULT_COUNTRY_CODE);
+            }
+            article.getMainImage().setName(localImageName);
+            languageContent.setMainImageName(articleServiceModel.getMainImage().getLocalImageNames().get(lang));
+        }
+
+        article.setAdmin(adminContent);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(article);
+    }
+
+    @GetMapping(value = "/edit/{id}/{lang}")
+    public ResponseEntity getArticleByLangAndParam(@PathVariable(name = "id") Long id,
+                                                   @PathVariable(name = "lang") CountryCodes lang,
+                                                   @RequestParam (name = "filter", required = false) String filter) {
+        ArticleServiceModel articleServiceModel = this.articleService.findById(id);
+        LocalisedArticleContentServiceModel localisedArticleContent = articleServiceModel.getLocalContent().get(lang);
+        if (localisedArticleContent == null) {
+            throw new NotFoundException("country.nonexistent");
+        }
+
+        if("content".equals(filter)){
+            ContentImageNameViewModel contentImageNameViewModel = new ContentImageNameViewModel();
+            contentImageNameViewModel.setContent(localisedArticleContent.getContent());
+            if(articleServiceModel.getMainImage() != null){
+                String localImageName = articleServiceModel.getMainImage().getLocalImageNames().get(lang);
+                contentImageNameViewModel.setMainImageName(localImageName);
+            }
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(contentImageNameViewModel);
+        }
+
+        Map<String, Object> localContent = articleServiceModel.getLocalContent().entrySet().stream()
+                .collect(Collectors.toMap(kv -> kv.getKey().toString(), kv -> new TitleViewModel(kv.getValue().getTitle())));
+        LanguageContent languageContent = new LanguageContent(localisedArticleContent.getTitle());
+        languageContent.setContent(localisedArticleContent.getContent());
+
+        if(articleServiceModel.getMainImage() != null){
+            String localImageName = articleServiceModel.getMainImage().getLocalImageNames().get(lang);
+            languageContent.setMainImageName(localImageName);
+        }
+        localContent.put(lang.toString(), languageContent);
+
+        if("map".equals(filter)){
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(localContent);
+
+        }
+
+        WholeArticle article = this.modelMapper.map(articleServiceModel, WholeArticle.class);
+        article.setTitle(localisedArticleContent.getTitle());
+        article.setContent(localisedArticleContent.getContent());
+
+        if(articleServiceModel.getMainImage() != null){
+            String localImageName = articleServiceModel.getMainImage().getLocalImageNames().get(lang);
+            if(localImageName==null){
+                localImageName = articleServiceModel.getMainImage().getLocalImageNames().get(DEFAULT_COUNTRY_CODE);
+            }
+            article.getMainImage().setName(localImageName);
+            languageContent.setMainImageName(articleServiceModel.getMainImage().getLocalImageNames().get(lang));
+        }
+
+        AdminContent adminContent = new AdminContent();
+        adminContent.setLocalContent(localContent);
+        article.setAdmin(adminContent);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(article);
+    }
+
+    @GetMapping(value = "/edit/{id}/{lang}/admin")
+    public ResponseEntity getAdminArticleByLang(@PathVariable(name = "id") Long id, @PathVariable(name = "lang") CountryCodes lang) {
+        ArticleServiceModel articleServiceModel = this.articleService.findById(id);
+        LocalisedArticleContentServiceModel localisedArticleContent = articleServiceModel.getLocalContent().get(lang);
+        if (localisedArticleContent == null) {
+            throw new NotFoundException("country.nonexistent");
+        }
+
+        Map<String, Object> localContent = articleServiceModel.getLocalContent().entrySet().stream()
+                .collect(Collectors.toMap(kv -> kv.getKey().toString(), kv -> new TitleViewModel(kv.getValue().getTitle())));
+
+        LanguageContent languageContent = new LanguageContent(localisedArticleContent.getTitle());
+        languageContent.setContent(localisedArticleContent.getContent());
+
+        if(articleServiceModel.getMainImage() != null){
+            String localImageName = articleServiceModel.getMainImage().getLocalImageNames().get(lang);
+            languageContent.setMainImageName(localImageName);
+        }
+        localContent.put(lang.toString(), languageContent);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(localContent);
+    }
+
+    @GetMapping(value = "/edit/{id}/{lang}/content")
+    public ResponseEntity getArticleContentByLang(@PathVariable(name = "id") Long id, @PathVariable(name = "lang") CountryCodes lang) {
+        ArticleServiceModel articleServiceModel = this.articleService.findById(id);
+        LocalisedArticleContentServiceModel localisedArticleContent = articleServiceModel.getLocalContent().get(lang);
+        if (localisedArticleContent == null) {
+            throw new NotFoundException("country.nonexistent");
+        }
+
+        ContentImageNameViewModel contentImageNameViewModel = new ContentImageNameViewModel();
+        contentImageNameViewModel.setContent(localisedArticleContent.getContent());
+        if(articleServiceModel.getMainImage() != null){
+            String localImageName = articleServiceModel.getMainImage().getLocalImageNames().get(lang);
+            contentImageNameViewModel.setMainImageName(localImageName);
         }
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(bindingModel);
+                .body(contentImageNameViewModel);
     }
 
-//    @ResponseBody
-//    @RequestMapping(method = {RequestMethod.PATCH}, value = "/edit", produces = {MediaType.APPLICATION_JSON_VALUE})
-//    @ResponseStatus(code = HttpStatus.ACCEPTED)
-//    public Object editArticleLangPut(@Valid @RequestBody ArticleLangBindingModel model, BindingResult bindingResult) {
-//        if (bindingResult.hasErrors()) {
-//            return super.getBindingErrorsMap(bindingResult.getAllErrors());
-//        }
-//        ArticleServiceModel articleServiceModel = this.articleService.findById(model.getId());
-//        LocalisedArticleContentServiceModel content = this.modelMapper.map(model, LocalisedArticleContentServiceModel.class);
-//        articleServiceModel.getLocalContent().put(model.getCountry(), content);
-//        if (articleServiceModel.getMainImage() != null) {
-//            articleServiceModel.getMainImage().getLocalImageNames().put(model.getCountry(), model.getMainImage());
-//        }
-//        this.articleService.updateArticle(articleServiceModel);
-//        return "\"/" + super.getLocale() + "/admin/articles/edit/" + model.getId() + "\"";
-//    }
+    @PatchMapping(value = "/edit/{id}/{lang}")
+    public ResponseEntity editArticleLangPatch(@PathVariable(name = "id") Long id, @PathVariable(name = "lang") CountryCodes lang,
+                                             @Valid @RequestBody ArticleEditLangModel model, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_ACCEPTABLE)
+                    .body(super.getBindingErrorsMap(bindingResult.getAllErrors()));
+        }
+        ArticleServiceModel articleServiceModel = this.articleService.findById(id);
+        LocalisedArticleContentServiceModel content = this.modelMapper.map(model, LocalisedArticleContentServiceModel.class);
+        articleServiceModel.getLocalContent().put(lang, content);
+        if (articleServiceModel.getMainImage() != null) {
+            articleServiceModel.getMainImage().getLocalImageNames().put(lang, model.getMainImage());
+        }
+        this.articleService.updateArticle(articleServiceModel);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Successfully edited language!");
+    }
 
     @GetMapping(value = "/edit/{id}")
     public ResponseEntity editArticle(@PathVariable(name = "id") Long id) {
@@ -178,7 +336,7 @@ public class ArticleController extends BaseController {
         ArticleServiceModel article = this.articleService.findById(id);
         LocalisedArticleContentServiceModel content = article.getLocalContent().get(super.getCurrentCookieLocale());
         if (content == null) {
-            LocalisedArticleContentServiceModel localContent = article.getLocalContent().get(AppConstants.DEFAULT_COUNTRY_CODE);
+            LocalisedArticleContentServiceModel localContent = article.getLocalContent().get(DEFAULT_COUNTRY_CODE);
             content = localContent != null ? localContent : article.getLocalContent().entrySet().iterator().next().getValue();
         }
         ArticleAddImageViewModel addImageViewModel;

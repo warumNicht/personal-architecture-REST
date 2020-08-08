@@ -1,6 +1,7 @@
 package architecture.error;
 
 import architecture.constants.AppConstants;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.web.util.WebUtils;
@@ -15,12 +16,14 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response,
                        AccessDeniedException e) throws IOException, ServletException {
-        Cookie actualCookie = WebUtils.getCookie(request, AppConstants.LOCALE_COOKIE_NAME);
-        String localeContext = actualCookie != null ? actualCookie.getValue() : "en";
-        request.getSession().setAttribute("accessDeniedException", e);
-        String contextPath = request.getContextPath();
-        String redirectedUrl = String.format("%s/%s/%s",
-                contextPath, localeContext, "unauthorized");
-        response.sendRedirect(redirectedUrl);
+        response.sendError(HttpStatus.FORBIDDEN.value(), e.getMessage());
+//        throw  e;
+//        Cookie actualCookie = WebUtils.getCookie(request, AppConstants.LOCALE_COOKIE_NAME);
+//        String localeContext = actualCookie != null ? actualCookie.getValue() : "en";
+//        request.getSession().setAttribute("accessDeniedException", e);
+//        String contextPath = request.getContextPath();
+//        String redirectedUrl = String.format("%s/%s/%s",
+//                contextPath, localeContext, "unauthorized");
+//        response.sendRedirect(redirectedUrl);
     }
 }

@@ -31,7 +31,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
             "WHERE a.id=b.id AND (KEY(n) = :countryCode OR KEY(n) = :defaultCode )) ")
     Object[] getAllNestedSelect(@Param(value = "countryCode") CountryCodes countryCode, @Param(value = "defaultCode") CountryCodes defaultCode);
 
-    @Query(value = "SELECT a.id,i.url,value(imNam) , a.date, value(m)" +
+    @Query(value = "SELECT a.id,i.url,value(imNam) , a.category.id, (value(m)).title " +
             "FROM Article a " +
             "LEFT JOIN Image  as i ON i.id=a.mainImage.id " +
             "LEFT JOIN i.localImageNames imNam ON key(imNam) = " +
