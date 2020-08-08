@@ -15,15 +15,7 @@ import java.io.IOException;
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response,
-                       AccessDeniedException e) throws IOException, ServletException {
+                       AccessDeniedException e) throws IOException{
         response.sendError(HttpStatus.FORBIDDEN.value(), e.getMessage());
-//        throw  e;
-//        Cookie actualCookie = WebUtils.getCookie(request, AppConstants.LOCALE_COOKIE_NAME);
-//        String localeContext = actualCookie != null ? actualCookie.getValue() : "en";
-//        request.getSession().setAttribute("accessDeniedException", e);
-//        String contextPath = request.getContextPath();
-//        String redirectedUrl = String.format("%s/%s/%s",
-//                contextPath, localeContext, "unauthorized");
-//        response.sendRedirect(redirectedUrl);
     }
 }
